@@ -20,6 +20,10 @@ QR-код публичного репозитория:
 
 <img src="assets/casepilot-repository-qr.png" alt="QR-код репозитория CasePilot" width="220">
 
+QR-код интерактивного демо:
+
+<img src="assets/casepilot-demo-qr.png" alt="QR-код интерактивного демо CasePilot" width="220">
+
 На GitHub Pages включён безопасный статический demo mode с пятью синтетическими
 кейсами: четыре полных сценария и одна контролируемая остановка из-за
 недостающих данных. Демо не обращается к OpenRouter и не расходует API-бюджет.
