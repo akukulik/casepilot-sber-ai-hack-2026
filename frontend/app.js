@@ -187,6 +187,18 @@ function scenarioName(result) {
   return result.scenario_title || result.scenario?.scenario_id || "Сценарий решения";
 }
 
+function selectedDemoFlow() {
+  if (!state.demoData) return null;
+  return state.demoData.flows?.[state.selectedId] || (
+    state.demoData.analysis && state.demoData.execution
+      ? {
+          analysis: state.demoData.analysis,
+          execution: state.demoData.execution,
+        }
+      : null
+  );
+}
+
 function renderStrategy(result) {
   state.analysis = result;
   state.executionRetryUsed = false;
@@ -506,6 +518,8 @@ async function approveAndExecute() {
   buttons.forEach((button) => { button.disabled = true; });
   approve.textContent = "Подтверждаем план…";
   if (state.demoMode) {
+    const demoFlow = selectedDemoFlow();
+    if (!demoFlow) return;
     const steps = state.analysis.plan.proposed_plan.map((step) => ({
       step_id: step.step_id,
       order: step.order,
@@ -514,6 +528,8 @@ async function approveAndExecute() {
       status: "pending",
     }));
     for (let index = 0; index < steps.length; index += 1) {
+      const finalStep = demoFlow.execution.steps[index];
+      if (!finalStep || finalStep.status === "pending") break;
       steps[index].status = "executing";
       renderExecution({
         execution_status: "executing",
@@ -523,9 +539,10 @@ async function approveAndExecute() {
         steps,
       });
       await new Promise((resolve) => setTimeout(resolve, 700));
-      steps[index] = { ...state.demoData.execution.steps[index] };
+      steps[index] = { ...finalStep };
+      if (finalStep.status === "failed") break;
     }
-    renderExecution(state.demoData.execution);
+    renderExecution(structuredClone(demoFlow.execution));
     return;
   }
   try {
@@ -619,9 +636,11 @@ async function runAnalysis() {
   }, 1000);
   try {
     if (state.demoMode) {
+      const demoFlow = selectedDemoFlow();
+      if (!demoFlow) throw new Error("Для кейса не настроен demo flow");
       await new Promise((resolve) => setTimeout(resolve, 1200));
       clearInterval(timer);
-      renderStrategy(structuredClone(state.demoData.analysis));
+      renderStrategy(structuredClone(demoFlow.analysis));
       return;
     }
     const response = await fetch(`/api/cases/${encodeURIComponent(state.selectedId)}/analysis`, { method: "POST" });
