@@ -1,5 +1,8 @@
 # CasePilot
 
+[![CasePilot CI](https://github.com/akukulik/casepilot-sber-ai-hack-2026/actions/workflows/ci.yml/badge.svg)](https://github.com/akukulik/casepilot-sber-ai-hack-2026/actions/workflows/ci.yml)
+[![Deploy GitHub Pages](https://github.com/akukulik/casepilot-sber-ai-hack-2026/actions/workflows/pages.yml/badge.svg)](https://github.com/akukulik/casepilot-sber-ai-hack-2026/actions/workflows/pages.yml)
+
 CasePilot — MVP агентного помощника оператора по сложным отложенным кейсам
 дебетовых карт для Sber AI Hack 2026. Агент на базе Ouroboros находит
 переиспользуемую стратегию, строит проверяемый план, ждёт решения сотрудника,
@@ -24,8 +27,7 @@ LLM и всеми runtime-проверками запускается локал
 2. Retrieval фильтрует сценарии по теме/подтеме, применяет BM25 и business
    rerank, затем передаёт модели до трёх лучших стратегий.
 3. `z-ai/glm-5.2` через OpenRouter формирует план из 2–20 шагов.
-4. Сотрудник подтверждает план, запрашивает одну редакцию или переводит кейс в
-   ручную работу.
+4. Сотрудник подтверждает план или переводит кейс в ручную работу.
 5. Подтверждённый план последовательно выполняется в mock-контуре.
 6. CasePilot показывает компактную рекомендацию, основания, ограничения,
    действия сотрудника и готовый ответ клиенту.
@@ -75,6 +77,10 @@ python -m pip install -r requirements-dev.txt
 ```bash
 python scripts/run_tests.py
 ```
+
+Воспроизводимость дополнительно проверена чистым клонированием, созданием новой
+`.venv` и установкой только из `requirements-dev.txt`. Отчёт:
+[`docs/clean_install_report.md`](docs/clean_install_report.md).
 
 Очистить накопленное демонстрационное состояние:
 
@@ -152,9 +158,10 @@ retrieval-маршрутом.
 
 ## Текущее состояние и ограничения
 
-Технический end-to-end MVP готов. Перед финальной подачей остаются продуктовые
-доработки: UI единственной редакции плана, обработчики терминальных действий и
-сохранение финального решения сотрудника по рекомендации. Полный список:
+Технический end-to-end MVP готов. Редактирование плана и автоматическое
+продолжение после остановок осознанно исключены из хакатонного scope. Перед
+финальной подачей остаётся добавить append-only сохранение финального решения
+сотрудника по рекомендации для последующей аналитики. Полный список:
 
 - [`docs/ISSUES.md`](docs/ISSUES.md);
 - [`docs/TO_BE.md`](docs/TO_BE.md);
