@@ -1,0 +1,47 @@
+name: CasePilot CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run CasePilot tests
+        run: python scripts/run_tests.py
+
+      - name: Validate frontend JavaScript
+        run: |
+          node --check frontend/app.js
+          node --check frontend/demo-data.js
+
+      - name: Check repository for committed secrets
+        shell: bash
+        run: |
+          if git grep -n -E \
+            '(sk-or-v1-[A-Za-z0-9_-]{20,}|BEGIN (RSA |OPENSSH |EC )?PRIVATE KEY|/Users/[^/]+/)' \
+            -- . \
+            ':(exclude).github/workflows/ci.yml' \
+            ':(exclude)docs/environment_report.md'; then
+            echo "Potential secret or absolute user path found."
+            exit 1
+          fi
