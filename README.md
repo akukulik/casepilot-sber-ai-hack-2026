@@ -16,7 +16,7 @@ CasePilot — MVP агентного помощника оператора по 
 Публичная веб-форма:
 [CasePilot на GitHub Pages](https://akukulik.github.io/casepilot-sber-ai-hack-2026/).
 
-QR-код публичного репозитория для презентации:
+QR-код публичного репозитория:
 
 <img src="assets/casepilot-repository-qr.png" alt="QR-код репозитория CasePilot" width="220">
 
