@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "decision_code",
+    "title",
+    "summary",
+    "key_findings",
+    "remaining_risks",
+    "employee_actions",
+    "client_response_draft",
+    "confidence",
+    "requires_employee_approval"
+  ],
+  "properties": {
+    "decision_code": {
+      "type": "string",
+      "pattern": "^[A-Z][A-Z0-9_]{2,63}$"
+    },
+    "title": {"type": "string", "minLength": 5, "maxLength": 160},
+    "summary": {"type": "string", "minLength": 10, "maxLength": 800},
+    "key_findings": {
+      "type": "array",
+      "maxItems": 10,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["finding", "source_step_id", "result_code"],
+        "properties": {
+          "finding": {"type": "string", "minLength": 3, "maxLength": 400},
+          "source_step_id": {"type": "string", "minLength": 1},
+          "result_code": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "remaining_risks": {
+      "type": "array",
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 3, "maxLength": 400}
+    },
+    "employee_actions": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 8,
+      "items": {"type": "string", "minLength": 3, "maxLength": 300}
+    },
+    "client_response_draft": {
+      "type": ["string", "null"],
+      "maxLength": 1200
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "score", "reason"],
+      "properties": {
+        "level": {"enum": ["low", "medium", "high"]},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "reason": {"type": "string", "minLength": 5, "maxLength": 400}
+      }
+    },
+    "requires_employee_approval": {"const": true}
+  }
+}

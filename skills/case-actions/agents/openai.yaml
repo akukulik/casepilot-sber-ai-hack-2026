@@ -1,0 +1,4 @@
+interface:
+  display_name: "CasePilot Case Actions"
+  short_description: "Run safe synthetic CasePilot case actions"
+  default_prompt: "Use $case-actions to run an approved synthetic CasePilot action."

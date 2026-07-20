@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/runtime_published_scenarios.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": [
+      "scenario_id", "version", "status", "case_topic", "case_subtopic",
+      "case_subtopics", "strategy_steps", "allowed_expertises",
+      "source_case_ids", "approved_by", "approved_at"
+    ],
+    "properties": {
+      "scenario_id": {"type": "string", "pattern": "^SCN-[A-Z0-9-]+$"},
+      "version": {"type": "integer", "minimum": 1},
+      "status": {"const": "approved"},
+      "case_topic": {"type": "string"},
+      "case_subtopic": {"type": "string"},
+      "case_subtopics": {"type": "array"},
+      "strategy_steps": {"type": "array", "minItems": 2, "maxItems": 20},
+      "allowed_expertises": {"type": "array"},
+      "source_case_ids": {"type": "array"},
+      "approved_by": {"const": "EMP-DEMO-001"},
+      "approved_at": {"type": "string", "format": "date-time"}
+    },
+    "additionalProperties": true
+  }
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Build Resolution Recommendation"
+  short_description: "Create an evidence-bound CasePilot recommendation"
+  default_prompt: "Use $build-resolution-recommendation to create a validated recommendation from one terminal execution."

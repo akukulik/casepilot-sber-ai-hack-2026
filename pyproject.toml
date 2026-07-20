@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "casepilot"
+version = "0.1.0"
+description = "Synthetic human-in-the-loop agent MVP for deferred debit-card cases"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+dependencies = [
+  "jsonschema>=4.21,<5",
+]
+
+[project.optional-dependencies]
+dev = [
+  "websockets>=12,<16",
+]
+
+[tool.setuptools]
+packages = ["casepilot"]

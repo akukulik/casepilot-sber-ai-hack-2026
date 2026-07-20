@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/scenario_learning_events.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "event_id", "case_id", "case_topic", "case_subtopic",
+      "problem_signature", "resolution_status", "operator_decision",
+      "actions_taken", "expertise_types", "required_inputs",
+      "resolution_summary", "validated_by", "validated_at"
+    ],
+    "properties": {
+      "event_id": {"type": "string", "pattern": "^SLE-[A-Z0-9-]+$"},
+      "case_id": {"type": "string", "minLength": 1},
+      "case_topic": {"const": "Дебетовые карты"},
+      "case_subtopic": {"type": "string", "minLength": 1},
+      "problem_signature": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+      "resolution_status": {"const": "validated_success"},
+      "operator_decision": {"enum": ["manual_resolution", "corrected_plan"]},
+      "actions_taken": {
+        "type": "array", "minItems": 2, "maxItems": 20,
+        "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}
+      },
+      "expertise_types": {
+        "type": "array", "minItems": 1, "maxItems": 4, "uniqueItems": true,
+        "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"}
+      },
+      "required_inputs": {
+        "type": "array", "minItems": 1, "uniqueItems": true,
+        "items": {"type": "string", "minLength": 1}
+      },
+      "resolution_summary": {"type": "string", "minLength": 20},
+      "validated_by": {"type": "string", "minLength": 1},
+      "validated_at": {"type": "string", "format": "date-time"}
+    }
+  }
+}

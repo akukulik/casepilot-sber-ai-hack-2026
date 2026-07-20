@@ -1,0 +1,285 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/resolution_plan.schema.json",
+  "title": "CasePilot proposed resolution plan",
+  "type": "object",
+  "additionalProperties": false,
+  "oneOf": [
+    {
+      "required": ["scenarios_used"]
+    },
+    {
+      "required": ["similar_cases_used"]
+    }
+  ],
+  "required": [
+    "case_id",
+    "case_summary",
+    "identified_problem",
+    "proposed_plan",
+    "required_expertises",
+    "confidence",
+    "open_questions",
+    "requires_employee_approval",
+    "recommended_next_action"
+  ],
+  "properties": {
+    "case_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_summary": {
+      "type": "string",
+      "minLength": 1
+    },
+    "identified_problem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "description", "evidence"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evidence": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "similar_cases_used": {
+      "type": "array",
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "similarity_score", "useful_pattern"],
+        "properties": {
+          "case_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "similarity_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "useful_pattern": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "scenarios_used": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 3,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "scenario_id",
+          "similarity_score",
+          "useful_pattern",
+          "source_case_ids"
+        ],
+        "properties": {
+          "scenario_id": {
+            "type": "string",
+            "pattern": "^SCN-[A-Z0-9-]+$"
+          },
+          "similarity_score": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "useful_pattern": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_case_ids": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "pattern": "^HIST-[A-Z0-9-]+$"
+            }
+          }
+        }
+      }
+    },
+    "proposed_plan": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 20,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "step_id",
+          "order",
+          "action_type",
+          "action",
+          "description",
+          "expertise_type",
+          "required_inputs",
+          "expected_result",
+          "success_condition",
+          "failure_action",
+          "status"
+        ],
+        "properties": {
+          "step_id": {
+            "type": "string",
+            "pattern": "^step_(?:[1-9]|1[0-9]|20)$"
+          },
+          "order": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "action_type": {
+            "type": "string",
+            "enum": [
+              "check",
+              "expertise",
+              "case_action",
+              "client_communication_draft"
+            ]
+          },
+          "action": {
+            "type": "string",
+            "enum": [
+              "check_account_state",
+              "check_pending_operations",
+              "request_expertise",
+              "check_account_closure_eligibility",
+              "wait_for_settlement",
+              "record_post_closure_instruction",
+              "collect_compliance_evidence",
+              "match_collection_surplus",
+              "prepare_resolution_decision"
+            ]
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expertise_type": {
+            "oneOf": [
+              {
+                "type": "null"
+              },
+              {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+              }
+            ]
+          },
+          "required_inputs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "expected_result": {
+            "type": "string",
+            "minLength": 1
+          },
+          "success_condition": {
+            "type": "string",
+            "minLength": 1
+          },
+          "failure_action": {
+            "type": "string",
+            "enum": [
+              "continue",
+              "request_information",
+              "replan",
+              "manual_review"
+            ]
+          },
+          "status": {
+            "const": "pending"
+          }
+        }
+      }
+    },
+    "required_expertises": {
+      "type": "array",
+      "maxItems": 4,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["expertise_type", "reason", "planned_step_id"],
+        "properties": {
+          "expertise_type": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 1
+          },
+          "planned_step_id": {
+            "type": "string",
+            "pattern": "^step_(?:[1-9]|1[0-9]|20)$"
+          }
+        }
+      }
+    },
+    "confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["level", "score", "reason"],
+      "properties": {
+        "level": {
+          "type": "string",
+          "enum": ["high", "medium", "low"]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "open_questions": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "requires_employee_approval": {
+      "const": true
+    },
+    "recommended_next_action": {
+      "type": "string",
+      "enum": [
+        "approve_plan",
+        "provide_information",
+        "manual_review"
+      ]
+    }
+  }
+}

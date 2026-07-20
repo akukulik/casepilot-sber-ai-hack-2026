@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": ["approval_id", "run_id", "case_id", "plan_id", "plan_version", "decision", "employee_id", "comment", "outcome", "reason", "created_at"],
+    "properties": {
+      "approval_id": {"type": "string"},
+      "run_id": {"type": "string", "pattern": "^RUN-VAL-[A-Z0-9]+-[0-9]+-[0-9]{4}$"},
+      "case_id": {"type": "string"},
+      "plan_id": {"type": "string"},
+      "plan_version": {"type": "integer", "minimum": 1, "maximum": 2},
+      "decision": {"enum": ["approve_plan", "request_change", "manual_review"]},
+      "employee_id": {"const": "EMP-DEMO-001"},
+      "comment": {"type": ["string", "null"]},
+      "outcome": {"enum": ["approved", "change_requested", "manual_review"]},
+      "reason": {"type": ["string", "null"]},
+      "created_at": {"type": "string", "format": "date-time"}
+    }
+  }
+}

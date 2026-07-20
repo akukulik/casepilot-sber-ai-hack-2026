@@ -1,0 +1,1676 @@
+[
+  {
+    "case_id": "VAL-DC-001",
+    "client_id": "SYN-CL-9001",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T13:10:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент повторно обращается по вопросу закрытия счёта дебетовой карты. Покупка в сервисе аренды была отменена, деньги доступны, но система продолжает видеть незавершённую карточную операцию и отклоняет закрытие.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T13:10:00+03:00",
+        "text": "Аренду отменили пять дней назад, сумма снова доступна. Мне срочно нужно закрыть карту перед переездом."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T13:14:00+03:00",
+        "text": "Запрос на закрытие вижу, но процессинг всё ещё показывает незавершённую авторизацию. Нужна дополнительная проверка."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T13:15:00+03:00",
+        "text": "Автозакрытие отклонено: ACTIVE_AUTHORIZATION_HOLD."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Екатеринбург",
+      "relationship_years": 5.6,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "relocation_deadline"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9001",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 4320,
+        "available_balance": 4320,
+        "linked_account_id": "SYN-ACC-9001"
+      },
+      {
+        "product_id": "SYN-ACC-9001",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": 4320,
+        "available_balance": 4320
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_AUTHORIZATION_HOLD",
+      "ledger_balance": 4320,
+      "available_balance": 4320,
+      "fee_events": [],
+      "authorization_events": [
+        {
+          "authorization_id": "SYN-AUTH-901",
+          "amount": 3200,
+          "merchant_category": "car_rental",
+          "status": "reversal_pending",
+          "expires_at": "2026-07-21T23:59:59+03:00"
+        }
+      ],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-901",
+          "type": "authorization_reversal",
+          "status": "processing"
+        }
+      ],
+      "restriction_flags": []
+    }
+  },
+  {
+    "case_id": "VAL-DC-002",
+    "client_id": "SYN-CL-9002",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T14:20:00+03:00",
+    "priority": "normal",
+    "case_description": "Закрытие счёта отклонено из-за технического минуса после комиссии, начисленной уже после блокировки дебетовой карты. Корректировка комиссии одобрена операционным подразделением, но требуется контрольная проверка.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T14:20:00+03:00",
+        "text": "Я заблокировал карту и вывел деньги, но вижу минус 199 рублей и не могу закрыть счёт."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T14:24:00+03:00",
+        "text": "Комиссия начислена после блокировки. В системе уже есть одобрение технической корректировки, проверим итоговый остаток."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T14:25:00+03:00",
+        "text": "Автозакрытие отклонено: ACCOUNT_BALANCE_NOT_ZERO."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Москва",
+      "relationship_years": 3.4,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9002",
+        "product_type": "debit_card",
+        "status": "blocked_by_client",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-9002"
+      },
+      {
+        "product_id": "SYN-ACC-9002",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": -199,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACCOUNT_BALANCE_NOT_ZERO",
+      "ledger_balance": -199,
+      "available_balance": 0,
+      "fee_events": [
+        {
+          "event_id": "SYN-FEE-902",
+          "type": "annual_service_fee",
+          "amount": 199,
+          "status": "technical_correction_approved"
+        }
+      ],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": []
+    }
+  },
+  {
+    "case_id": "VAL-DC-003",
+    "client_id": "SYN-CL-9003",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T15:10:00+03:00",
+    "priority": "high",
+    "case_description": "Счёт с нулевым остатком нельзя закрыть из-за ограничения по исполнительному документу. В системных данных одновременно присутствуют признаки активного ограничения и неоднозначного юридического основания.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T15:10:00+03:00",
+        "text": "Денег на счёте нет, но закрытие недоступно. Документ об ограничении мне неизвестен."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T15:14:00+03:00",
+        "text": "По счёту есть внешний запрет с неоднозначным основанием. Нужна проверка комплаенса и юридического подразделения."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T15:15:00+03:00",
+        "text": "Автозакрытие отклонено: ACTIVE_ACCOUNT_RESTRICTION."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Казань",
+      "relationship_years": 1.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9003",
+        "product_type": "debit_card",
+        "status": "expired",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-9003"
+      },
+      {
+        "product_id": "SYN-ACC-9003",
+        "product_type": "current_account",
+        "status": "restricted",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_ACCOUNT_RESTRICTION",
+      "ledger_balance": 0,
+      "available_balance": 0,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": [
+        "enforcement_hold",
+        "legal_basis_ambiguous"
+      ],
+      "restriction_reference": "SYN-ENF-2026-903",
+      "restriction_status": "ambiguous_legal_basis"
+    }
+  },
+  {
+    "case_id": "VAL-DC-004",
+    "client_id": "SYN-CL-9004",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T16:00:00+03:00",
+    "priority": "normal",
+    "case_description": "Закрытие нулевого дебетового счёта отклонено из-за ограничения. Выгрузка содержит статус и флаг ограничения, но обязательный номер документа отсутствует, поэтому проверку основания выполнить нельзя.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T16:00:00+03:00",
+        "text": "Приложение не объясняет, почему нулевой счёт нельзя закрыть. Подскажите, какой документ это блокирует."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T16:05:00+03:00",
+        "text": "В выгрузке есть флаг ограничения, но отсутствует его регистрационный номер. Сначала нужно запросить недостающие сведения."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T16:06:00+03:00",
+        "text": "Автозакрытие отклонено: ACTIVE_ACCOUNT_RESTRICTION; restriction_reference отсутствует."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Самара",
+      "relationship_years": 2.7,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9004",
+        "product_type": "debit_card",
+        "status": "inactive",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-9004"
+      },
+      {
+        "product_id": "SYN-ACC-9004",
+        "product_type": "current_account",
+        "status": "restricted",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_ACCOUNT_RESTRICTION",
+      "ledger_balance": 0,
+      "available_balance": 0,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": [
+        "enforcement_hold"
+      ],
+      "restriction_status": "active"
+    }
+  },
+  {
+    "case_id": "VAL-DC-005",
+    "client_id": "SYN-CL-9105",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-08T12:11:00+03:00",
+    "priority": "critical",
+    "case_description": "Клиент просит закрыть дебетовый счёт и вывести весь остаток 214 500 рублей, однако на 160 000 рублей действует частичное правовое ограничение с недоступными сотруднику деталями.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-08T12:11:00+03:00",
+        "text": "Закройте счёт и переведите все деньги в другой банк. Я не понимаю, почему часть суммы недоступна."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-08T12:16:00+03:00",
+        "text": "Вижу частичное ограничение, но его основание и точный объём полномочий в моём интерфейсе не раскрыты."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-08T12:17:00+03:00",
+        "text": "Закрытие отклонено: ACTIVE_ACCOUNT_RESTRICTION."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Пермский край",
+      "relationship_years": 5.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9105",
+        "product_type": "debit_card",
+        "status": "temporarily_blocked_for_closure",
+        "currency": "RUB",
+        "balance": 214500,
+        "available_balance": 54500,
+        "linked_account_id": "SYN-ACC-9105"
+      },
+      {
+        "product_id": "SYN-ACC-9105",
+        "product_type": "current_account",
+        "status": "active_restricted",
+        "currency": "RUB",
+        "balance": 214500,
+        "available_balance": 54500
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_ACCOUNT_RESTRICTION",
+      "ledger_balance": 214500,
+      "available_balance": 54500,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-905",
+          "type": "incoming_payroll_instruction",
+          "status": "active"
+        }
+      ],
+      "restriction_flags": [
+        "LEGAL_HOLD_PARTIAL"
+      ],
+      "restriction_reference": "SYN-RST-905",
+      "restriction_status": "active_scope_unavailable",
+      "restricted_amount": 160000,
+      "closure_blockers": [
+        "LEGAL_HOLD_PARTIAL",
+        "INCOMING_PAYROLL_ACTIVE"
+      ]
+    }
+  },
+  {
+    "case_id": "VAL-DC-006",
+    "client_id": "SYN-CL-9106",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-17T10:28:00+03:00",
+    "priority": "high",
+    "case_description": "Представитель клиента просит закрыть дебетовый счёт и перевести остаток 128 400 рублей по доверенности, которая разрешает распоряжение средствами, но прямо не упоминает закрытие счетов.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-17T10:28:00+03:00",
+        "text": "Я действую по доверенности владельца: нужно закрыть его счёт и перевести остаток на другой его счёт."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-17T10:34:00+03:00",
+        "text": "Документ позволяет получать сведения и распоряжаться деньгами, но полномочие на закрытие продукта сформулировано неявно."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-17T10:35:00+03:00",
+        "text": "Закрытие приостановлено: REPRESENTATIVE_AUTHORITY_REVIEW."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Рязанская область",
+      "relationship_years": 8.0,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "owner_long_term_treatment"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9106",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 128400,
+        "available_balance": 128400,
+        "linked_account_id": "SYN-ACC-9106"
+      },
+      {
+        "product_id": "SYN-ACC-9106",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": 128400,
+        "available_balance": 128400
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "REPRESENTATIVE_AUTHORITY_REVIEW",
+      "ledger_balance": 128400,
+      "available_balance": 128400,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "REPRESENTATIVE_AUTHORITY_REVIEW"
+      ],
+      "representative_id": "SYN-REP-906",
+      "authority_document": {
+        "document_id": "SYN-POA-906",
+        "synthetic": true,
+        "powers": [
+          "receive_account_information",
+          "manage_funds"
+        ],
+        "explicit_account_closure_power": false
+      },
+      "requested_action": "close_account_and_transfer_balance"
+    }
+  },
+  {
+    "case_id": "VAL-DC-007",
+    "client_id": "SYN-CL-9107",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T18:19:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент просит срочно закрыть счёт с нулевым балансом перед переездом, но остаются активными прямое списание, платёж по расписанию и инструкция на входящее зарплатное зачисление.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T18:19:00+03:00",
+        "text": "Баланс нулевой, карту я заблокировал. Закройте счёт сегодня, я уезжаю."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T18:23:00+03:00",
+        "text": "Карточных холдов нет, но вижу несколько других активных платёжных инструкций, которые могут сработать после закрытия."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T18:24:00+03:00",
+        "text": "Закрытие приостановлено: MULTIPLE_OUTSTANDING_ITEMS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Калининградская область",
+      "relationship_years": 2.7,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "relocation_deadline"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9107",
+        "product_type": "debit_card",
+        "status": "blocked_for_closure",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-9107"
+      },
+      {
+        "product_id": "SYN-ACC-9107",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "MULTIPLE_OUTSTANDING_ITEMS",
+      "ledger_balance": 0,
+      "available_balance": 0,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-907A",
+          "type": "direct_debit",
+          "status": "active",
+          "next_due_date": "2026-07-23"
+        },
+        {
+          "operation_id": "SYN-OP-907B",
+          "type": "scheduled_bill_pay",
+          "status": "scheduled",
+          "execution_date": "2026-07-21"
+        },
+        {
+          "operation_id": "SYN-OP-907C",
+          "type": "incoming_payroll_instruction",
+          "status": "active",
+          "expected_date": "2026-07-25"
+        }
+      ],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "DIRECT_DEBIT_ACTIVE",
+        "SCHEDULED_BILL_PAY",
+        "INCOMING_PAYROLL_ACTIVE"
+      ]
+    }
+  },
+  {
+    "case_id": "VAL-DC-008",
+    "client_id": "SYN-CL-9108",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-07-18T14:36:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент хочет закрыть счёт с остатком 6 430 рублей, хотя по нему открыт спор о комиссии, ожидается возврат 4 890 рублей и сохранено активное соглашение на будущие списания.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T14:36:00+03:00",
+        "text": "Закройте счёт сегодня и перечислите весь окончательный остаток. Возврат от сервиса бронирования ещё не пришёл."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T14:41:00+03:00",
+        "text": "Кроме ожидаемого возврата открыт спор по комиссии и активно сохранённое платёжное соглашение с видеосервисом."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-18T14:42:00+03:00",
+        "text": "Закрытие приостановлено: OPEN_DISPUTE_AND_EXPECTED_REFUND."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Омская область",
+      "relationship_years": 4.6,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-9108",
+        "product_type": "debit_card",
+        "status": "blocked_for_closure",
+        "currency": "RUB",
+        "balance": 6430,
+        "available_balance": 6430,
+        "linked_account_id": "SYN-ACC-9108"
+      },
+      {
+        "product_id": "SYN-ACC-9108",
+        "product_type": "current_account",
+        "status": "active_pending_closure",
+        "currency": "RUB",
+        "balance": 6430,
+        "available_balance": 6430
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "OPEN_DISPUTE_AND_EXPECTED_REFUND",
+      "ledger_balance": 6430,
+      "available_balance": 6430,
+      "fee_events": [
+        {
+          "event_id": "SYN-FEE-908",
+          "type": "service_fee",
+          "amount": 1200,
+          "status": "disputed"
+        }
+      ],
+      "authorization_events": [],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-908A",
+          "type": "merchant_refund",
+          "amount": 4890,
+          "status": "expected_reference_missing"
+        },
+        {
+          "operation_id": "SYN-OP-908B",
+          "type": "card_on_file_agreement",
+          "status": "active",
+          "next_charge_at": "2026-07-22T08:00:00+03:00"
+        }
+      ],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "OPEN_FEE_DISPUTE",
+        "EXPECTED_REFUND",
+        "ACTIVE_CARD_ON_FILE"
+      ]
+    }
+  },
+  {
+    "case_id": "VAL-DC-009",
+    "client_id": "SYN-CL-9209",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неавторизованная операция",
+    "created_at": "2026-07-01T09:40:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент увидел ночную оплату 12 940 ₽ у DIGITALHUB*GAMES. Физическая карта находилась у него, но в истории карты есть активный токен мобильного кошелька, созданный за три дня до операции. Клиент утверждает, что новый телефон не подключал.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-01T09:40:00+03:00",
+        "text": "Заблокировать дальнейшие операции и вернуть сумму."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-01T09:40:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент увидел ночную оплату 12 940 ₽ у DIGITALHUB*GAMES. Физическая карта находилась у него, но в истории карты есть активный токен мобильного кошелька, созданный за три дня до операции. Клиент утверждает, что новый телефон не подключал."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Пензенская область",
+      "relationship_years": 7.5,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3109",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 23881.2,
+        "available_balance": 23881.2,
+        "linked_account_id": "SYN-ACC-4109"
+      },
+      {
+        "product_id": "SYN-ACC-4109",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 23881.2,
+        "available_balance": 23881.2
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "UNAUTHORIZED_CARD_TRANSACTION",
+      "source_topic": "unauthorized_card_transaction",
+      "ledger_balance": 23881.2,
+      "available_balance": 23881.2,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1001",
+          "type": "card_purchase",
+          "merchant": "DIGITALHUB*GAMES",
+          "channel": "mobile_wallet_ecommerce",
+          "posted_at": "2026-06-30T02:19:00+03:00",
+          "amount": -12940.0,
+          "currency": "RUB",
+          "status": "posted",
+          "authentication_method": "token_cryptogram"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "customer_statement",
+          "summary": "Клиент отрицает создание токена и покупку."
+        }
+      ],
+      "missing_information": [
+        "device_registration_ip",
+        "wallet_token_provisioning_method",
+        "customer_device_history",
+        "similar_prior_transactions"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-109"
+    }
+  },
+  {
+    "case_id": "VAL-DC-010",
+    "client_id": "SYN-CL-9210",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Внесение наличных",
+    "created_at": "2026-07-04T15:22:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент внёс через cash-in банкомат 86 000 ₽ купюрами разного номинала. Устройство показало распознанную сумму 76 000 ₽, после чего клиент подтвердил операцию, полагая, что недостающие купюры будут возвращены. Банкомат ничего не вернул, на счёт поступило 76 000 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-04T15:22:00+03:00",
+        "text": "Проверить банкомат и зачислить недостающие 10 000 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-04T15:22:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент внёс через cash-in банкомат 86 000 ₽ купюрами разного номинала. Устройство показало распознанную сумму 76 000 ₽, после чего клиент подтвердил операцию, полагая, что недостающие купюры будут возвращены. Банкомат ничего не вернул, на счёт поступило 76 000 ₽."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Псковская область",
+      "relationship_years": 8.2,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "hearing_impairment"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3110",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 91430.0,
+        "available_balance": 91430.0,
+        "linked_account_id": "SYN-ACC-4110"
+      },
+      {
+        "product_id": "SYN-ACC-4110",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 91430.0,
+        "available_balance": 91430.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CASH_DEPOSIT_EXCEPTION",
+      "source_topic": "cash_deposit_exception",
+      "ledger_balance": 91430.0,
+      "available_balance": 91430.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1002",
+          "type": "cash_deposit",
+          "atm_id": "ATM-OWN-1055",
+          "location": "Офис на проспекте Мира",
+          "created_at": "2026-07-04T11:06:00+03:00",
+          "customer_claimed_amount": 86000.0,
+          "machine_recognized_amount": 76000.0,
+          "posted_amount": 76000.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "atm_receipt",
+          "summary": "Чек подтверждает зачисление 76 000 ₽."
+        },
+        {
+          "type": "customer_statement",
+          "summary": "Клиент сообщает о двух невозвращённых купюрах по 5 000 ₽."
+        }
+      ],
+      "missing_information": [
+        "atm_journal",
+        "cash_reconciliation_result",
+        "cash_acceptor_images",
+        "surplus_amount"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-110"
+    }
+  },
+  {
+    "case_id": "VAL-DC-011",
+    "client_id": "SYN-CL-9211",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Спор с торговой точкой",
+    "created_at": "2026-07-12T20:04:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент оплатил 58 900 ₽ за комплект садовой мебели в магазине GreenRoom Market. Срок доставки прошёл 18 дней назад, сайт магазина перестал открываться, телефон отключён. Из заказа была доставлена только одна подушка стоимостью 1 200 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-12T20:04:00+03:00",
+        "text": "Вернуть деньги за неполученную часть заказа."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-12T20:04:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент оплатил 58 900 ₽ за комплект садовой мебели в магазине GreenRoom Market. Срок доставки прошёл 18 дней назад, сайт магазина перестал открываться, телефон отключён. Из заказа была доставлена только одна подушка стоимостью 1 200 ₽."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Саратовская область",
+      "relationship_years": 1.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3111",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 7340.9,
+        "available_balance": 7340.9,
+        "linked_account_id": "SYN-ACC-4111"
+      },
+      {
+        "product_id": "SYN-ACC-4111",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 7340.9,
+        "available_balance": 7340.9
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_DISPUTE_NON_DELIVERY",
+      "source_topic": "merchant_dispute_non_delivery",
+      "ledger_balance": 7340.9,
+      "available_balance": 7340.9,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1004",
+          "type": "card_purchase",
+          "merchant": "GREENROOM MARKET",
+          "posted_at": "2026-05-29T04:18:00+03:00",
+          "amount": -58900.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "order_confirmation",
+          "summary": "Заказ на 58 900 ₽, доставка до 24 июня."
+        },
+        {
+          "type": "delivery_photo",
+          "summary": "Получена только одна подушка."
+        },
+        {
+          "type": "contact_attempts",
+          "summary": "Три письма без ответа; телефон отключён."
+        }
+      ],
+      "missing_information": [
+        "itemized_price_breakdown",
+        "merchant_insolvency_status",
+        "latest_dispute_deadline"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-111"
+    }
+  },
+  {
+    "case_id": "VAL-DC-012",
+    "client_id": "SYN-CL-9212",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Операции по утраченной карте",
+    "created_at": "2026-07-15T09:32:00+03:00",
+    "priority": "critical",
+    "case_description": "Клиент потерял карту около 18:30, но сообщил банку в 22:10. Между 19:02 и 21:44 прошли четыре contactless-покупки на общую сумму 18 760 ₽. После установленной блокировки была ещё одна отклонённая попытка.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-15T09:32:00+03:00",
+        "text": "Вернуть четыре покупки и перевыпустить карту."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-15T09:32:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент потерял карту около 18:30, но сообщил банку в 22:10. Между 19:02 и 21:44 прошли четыре contactless-покупки на общую сумму 18 760 ₽. После установленной блокировки была ещё одна отклонённая попытка."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Смоленская область",
+      "relationship_years": 1.9,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3112",
+        "product_type": "debit_card",
+        "status": "permanently_blocked",
+        "currency": "RUB",
+        "balance": 11940.0,
+        "available_balance": 11940.0,
+        "linked_account_id": "SYN-ACC-4112"
+      },
+      {
+        "product_id": "SYN-ACC-4112",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 11940.0,
+        "available_balance": 11940.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "LOST_CARD_TRANSACTIONS",
+      "source_topic": "lost_card_transactions",
+      "ledger_balance": 11940.0,
+      "available_balance": 11940.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1051",
+          "type": "contactless_purchase",
+          "posted_amount": -2490.0,
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1052",
+          "type": "contactless_purchase",
+          "posted_amount": -8170.0,
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1053",
+          "type": "contactless_purchase",
+          "posted_amount": -3100.0,
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1054",
+          "type": "contactless_purchase",
+          "posted_amount": -5000.0,
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "customer_timeline",
+          "summary": "Карта потеряна до всех четырёх операций."
+        },
+        {
+          "type": "block_log",
+          "summary": "После 22:10 новые попытки отклонялись."
+        }
+      ],
+      "missing_information": [
+        "merchant_locations",
+        "customer_location",
+        "contactless_cvm_results",
+        "prior_similar_transactions"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-112"
+    }
+  },
+  {
+    "case_id": "VAL-DC-013",
+    "client_id": "SYN-CL-9213",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неуспешный реверс",
+    "created_at": "2026-07-16T13:44:00+03:00",
+    "priority": "high",
+    "case_description": "АЗС установила предавторизацию 8 000 ₽, итоговая покупка составила 3 240 ₽ и была posted. Через пять дней hold на 8 000 ₽ исчез, но затем отдельным дебетом также posted сумма 8 000 ₽. На счёте одновременно отражены 3 240 ₽ и 8 000 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-16T13:44:00+03:00",
+        "text": "Вернуть ошибочные 8 000 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-16T13:44:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: АЗС установила предавторизацию 8 000 ₽, итоговая покупка составила 3 240 ₽ и была posted. Через пять дней hold на 8 000 ₽ исчез, но затем отдельным дебетом также posted сумма 8 000 ₽. На счёте одновременно отражены 3 240 ₽ и 8 000 ₽."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Томская область",
+      "relationship_years": 2.6,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3113",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 6201.18,
+        "available_balance": 6201.18,
+        "linked_account_id": "SYN-ACC-4113"
+      },
+      {
+        "product_id": "SYN-ACC-4113",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 6201.18,
+        "available_balance": 6201.18
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "FAILED_REVERSAL",
+      "source_topic": "failed_reversal",
+      "ledger_balance": 6201.18,
+      "available_balance": 6201.18,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1061",
+          "type": "card_purchase",
+          "merchant": "FUELWAY 24",
+          "amount": -3240.0,
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1062",
+          "type": "card_purchase",
+          "merchant": "FUELWAY 24",
+          "amount": -8000.0,
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "fuel_receipt",
+          "summary": "Фактически отпущено топливо на 3 240 ₽."
+        }
+      ],
+      "missing_information": [
+        "authorization_references",
+        "presentment_references",
+        "merchant_batch_data",
+        "reversal_message_status"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-113"
+    }
+  },
+  {
+    "case_id": "VAL-DC-014",
+    "client_id": "SYN-CL-9214",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Идентификация карточной операции",
+    "created_at": "2026-07-15T10:18:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент увидел списание 4 280 ₽ с descriptor URBANMOVE*TRIP через 19 дней после поездки в другом городе. В день поездки в приложении была pending-операция на такую же сумму под названием CITY CAB, затем она исчезла. Клиент не узнаёт новый descriptor и считает операцию мошеннической.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-15T10:18:00+03:00",
+        "text": "Проверить, является ли списание мошенничеством, и при необходимости вернуть деньги."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-15T10:18:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент увидел списание 4 280 ₽ с descriptor URBANMOVE*TRIP через 19 дней после поездки в другом городе. В день поездки в приложении была pending-операция на такую же сумму под названием CITY CAB, затем она исчезла. Клиент не узнаёт новый descriptor и считает операцию мошеннической."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Ульяновская область",
+      "relationship_years": 3.3,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3114",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 17642.19,
+        "available_balance": 17642.19,
+        "linked_account_id": "SYN-ACC-4114"
+      },
+      {
+        "product_id": "SYN-ACC-4114",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 17642.19,
+        "available_balance": 17642.19
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_DESCRIPTOR_OR_LATE_PRESENTMENT",
+      "source_topic": "merchant_descriptor_or_late_presentment",
+      "ledger_balance": 17642.19,
+      "available_balance": 17642.19,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1009-A",
+          "type": "card_authorization",
+          "merchant": "CITY CAB",
+          "authorization_at": "2026-06-25T23:48:00+03:00",
+          "amount": -4280.0,
+          "currency": "RUB",
+          "status": "released"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1009-B",
+          "type": "card_purchase",
+          "merchant": "URBANMOVE*TRIP",
+          "posted_at": "2026-07-14T05:16:00+03:00",
+          "amount": -4280.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "customer_statement",
+          "summary": "Клиент подтверждает поездку в указанную дату, но не узнаёт descriptor."
+        }
+      ],
+      "missing_information": [
+        "acquirer_reference_match",
+        "merchant_descriptor_mapping",
+        "ride_receipt",
+        "authorization_to_presentment_link",
+        "exact_service_location"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-114"
+    }
+  },
+  {
+    "case_id": "VAL-DC-015",
+    "client_id": "SYN-CL-9215",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Ограничение операций",
+    "created_at": "2026-07-16T16:42:00+03:00",
+    "priority": "high",
+    "case_description": "На счёте действует частичное legal restriction на 95 000 ₽. После его установки на счёт поступил refund 18 600 ₽ за отменённую поездку. Клиент просит перевести refund на другой банк, утверждая, что ограничение относится только к ранее имевшимся средствам. Frontline видит сумму ограничения, но не scope документа.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-16T16:42:00+03:00",
+        "text": "Разрешить перевод возврата 18 600 ₽ и оставить ограниченной только остальную сумму."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-16T16:42:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: На счёте действует частичное legal restriction на 95 000 ₽. После его установки на счёт поступил refund 18 600 ₽ за отменённую поездку. Клиент просит перевести refund на другой банк, утверждая, что ограничение относится только к ранее имевшимся средствам. Frontline видит сумму ограничения, но не scope документа."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Архангельская область",
+      "relationship_years": 4.0,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3115",
+        "product_type": "debit_card",
+        "status": "temporarily_blocked",
+        "currency": "RUB",
+        "balance": 121840.0,
+        "available_balance": 26840.0,
+        "linked_account_id": "SYN-ACC-4115"
+      },
+      {
+        "product_id": "SYN-ACC-4115",
+        "product_type": "current_account",
+        "status": "active_restricted",
+        "currency": "RUB",
+        "balance": 121840.0,
+        "available_balance": 26840.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "PARTIAL_LEGAL_RESTRICTION_INCOMING_REFUND",
+      "source_topic": "partial_legal_restriction_incoming_refund",
+      "ledger_balance": 121840.0,
+      "available_balance": 26840.0,
+      "account_status": "active_restricted",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1010",
+          "type": "refund",
+          "merchant": "SKYROUTE",
+          "posted_at": "2026-07-15T04:38:00+03:00",
+          "amount": 18600.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "refund_record",
+          "summary": "Refund за отменённую поездку окончательно зачислен после даты restriction."
+        }
+      ],
+      "missing_information": [
+        "legal_order_scope",
+        "protected_funds_rules",
+        "restriction_effective_balance",
+        "whether_post_order_credits_are_restricted",
+        "legal_team_instruction"
+      ],
+      "blockers": [
+        "LEGAL_HOLD_PARTIAL"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-115"
+    }
+  },
+  {
+    "case_id": "VAL-DC-016",
+    "client_id": "SYN-CL-9216",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Регулярный платёж",
+    "created_at": "2026-07-17T09:07:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент отменил подписку на фитнес-приложение и попросил банк заблокировать будущие списания по карте. Через неделю со счёта ушли 2 990 ₽ с тем же названием получателя, но transaction type отображается как account_debit_mandate, а не card purchase. Карта была перевыпущена до списания.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-17T09:07:00+03:00",
+        "text": "Остановить следующие списания и вернуть 2 990 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-17T09:07:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент отменил подписку на фитнес-приложение и попросил банк заблокировать будущие списания по карте. Через неделю со счёта ушли 2 990 ₽ с тем же названием получателя, но transaction type отображается как account_debit_mandate, а не card purchase. Карта была перевыпущена до списания."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Белгородская область",
+      "relationship_years": 4.7,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3116",
+        "product_type": "debit_card",
+        "status": "active_replaced",
+        "currency": "RUB",
+        "balance": 8340.55,
+        "available_balance": 8340.55,
+        "linked_account_id": "SYN-ACC-4116"
+      },
+      {
+        "product_id": "SYN-ACC-4116",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 8340.55,
+        "available_balance": 8340.55
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "RECURRING_PAYMENT_WRONG_RAIL",
+      "source_topic": "recurring_payment_wrong_rail",
+      "ledger_balance": 8340.55,
+      "available_balance": 8340.55,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1011",
+          "type": "account_debit_mandate",
+          "merchant": "FLEXFORM FITNESS",
+          "posted_at": "2026-07-16T07:00:00+03:00",
+          "amount": -2990.0,
+          "currency": "RUB",
+          "status": "posted",
+          "mandate_id": "MDT-SYN-8840"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "merchant_cancellation_email",
+          "summary": "Подписка в приложении отменена 8 июля."
+        },
+        {
+          "type": "card_reissue_record",
+          "summary": "Старая карта закрыта 10 июля."
+        }
+      ],
+      "missing_information": [
+        "mandate_creation_date",
+        "mandate_cancellation_status",
+        "rail_specific_return_rights",
+        "next_due_date",
+        "whether_customer_cancelled_account_debit_mandate"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-116"
+    }
+  },
+  {
+    "case_id": "VAL-DC-017",
+    "client_id": "SYN-CL-9217",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Санкционная проверка",
+    "created_at": "2026-07-18T13:26:00+03:00",
+    "priority": "critical",
+    "case_description": "Счёт клиента ограничен после нового sanctions alert. Одновременно на него должен поступить refund 64 300 ₽ от иностранной авиакомпании. Имя, дата рождения и страна гражданства клиента совпадают с записью в screening list, но в профиле нет второго гражданства и номера паспорта из alert. Клиент требует немедленно зачислить и вывести возврат.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-18T13:26:00+03:00",
+        "text": "Снять ограничение и перевести ожидаемый refund на счёт родственника."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-18T13:26:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Счёт клиента ограничен после нового sanctions alert. Одновременно на него должен поступить refund 64 300 ₽ от иностранной авиакомпании. Имя, дата рождения и страна гражданства клиента совпадают с записью в screening list, но в профиле нет второго гражданства и номера паспорта из alert. Клиент требует немедленно зачислить и вывести возврат."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Вологодская область",
+      "relationship_years": 5.4,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3117",
+        "product_type": "debit_card",
+        "status": "blocked_compliance",
+        "currency": "RUB",
+        "balance": 12780.0,
+        "available_balance": 0.0,
+        "linked_account_id": "SYN-ACC-4117"
+      },
+      {
+        "product_id": "SYN-ACC-4117",
+        "product_type": "current_account",
+        "status": "restricted",
+        "currency": "RUB",
+        "balance": 12780.0,
+        "available_balance": 0.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "SANCTIONS_POSSIBLE_TRUE_MATCH_AND_REFUND",
+      "source_topic": "sanctions_possible_true_match_and_refund",
+      "ledger_balance": 12780.0,
+      "available_balance": 0.0,
+      "account_status": "restricted",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1012",
+          "type": "expected_refund",
+          "merchant": "AEROGLIDE INTL",
+          "expected_amount": 64300.0,
+          "currency": "RUB",
+          "status": "not_yet_received"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "screening_alert",
+          "summary": "Совпадают ФИО, дата рождения и гражданство; паспортный идентификатор не совпадает с текущим KYC."
+        },
+        {
+          "type": "merchant_refund_notice",
+          "summary": "Авиакомпания заявила refund 64 300 ₽ в течение десяти рабочих дней."
+        }
+      ],
+      "missing_information": [
+        "historical_passport_data",
+        "second_citizenship_check",
+        "screening_list_identifier_quality",
+        "refund_handling_under_restriction",
+        "compliance_final_decision"
+      ],
+      "blockers": [
+        "SANCTIONS_REVIEW",
+        "OUTGOING_TRANSFERS_BLOCKED"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-117"
+    }
+  },
+  {
+    "case_id": "VAL-DC-018",
+    "client_id": "SYN-CL-9218",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Возврат по карточной операции",
+    "created_at": "2026-07-13T10:26:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент ожидает возврат 11 480 ₽ за отменённый заказ одежды. Merchant прислал два письма: первое на полный refund, второе — о корректировке возврата до 8 980 ₽ из-за невозвратной доставки. В выписке пока виден pending credit 8 980 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-13T10:26:00+03:00",
+        "text": "Зачислить недостающие 2 500 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-13T10:26:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент ожидает возврат 11 480 ₽ за отменённый заказ одежды. Merchant прислал два письма: первое на полный refund, второе — о корректировке возврата до 8 980 ₽ из-за невозвратной доставки. В выписке пока виден pending credit 8 980 ₽."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Иркутская область",
+      "relationship_years": 6.1,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3118",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 18450.9,
+        "available_balance": 18450.9,
+        "linked_account_id": "SYN-ACC-4118"
+      },
+      {
+        "product_id": "SYN-ACC-4118",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 18450.9,
+        "available_balance": 18450.9
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "REFUND_NOT_RECEIVED",
+      "source_topic": "refund_not_received",
+      "ledger_balance": 18450.9,
+      "available_balance": 18450.9,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1013-A",
+          "type": "card_purchase",
+          "merchant": "NORTHCLOSET",
+          "posted_at": "2026-06-28T04:15:00+03:00",
+          "amount": -11480.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1013-B",
+          "type": "refund",
+          "merchant": "NORTHCLOSET",
+          "created_at": "2026-07-12T18:20:00+03:00",
+          "amount": 8980.0,
+          "currency": "RUB",
+          "status": "pending"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "merchant_emails",
+          "summary": "Два сообщения содержат противоречивые формулировки о размере refund."
+        },
+        {
+          "type": "order_terms",
+          "summary": "В заказе отдельно указана доставка 2 500 ₽."
+        }
+      ],
+      "missing_information": [
+        "final_refund_reference",
+        "whether_shipping_was_refundable",
+        "pending_credit_final_status",
+        "merchant_return_policy_version"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-118"
+    }
+  },
+  {
+    "case_id": "VAL-DC-019",
+    "client_id": "SYN-CL-9219",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Операция в банкомате",
+    "created_at": "2026-07-15T08:53:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент заявил, что получил из банкомата 25 000 ₽ вместо запрошенных 30 000 ₽. Чек показывает 30 000 ₽, клиент утверждает, что среди выданных банкнот не хватало одной купюры 5 000 ₽. ATM принадлежит стороннему банку.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-15T08:53:00+03:00",
+        "text": "Вернуть недостающие 5 000 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-15T08:53:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент заявил, что получил из банкомата 25 000 ₽ вместо запрошенных 30 000 ₽. Чек показывает 30 000 ₽, клиент утверждает, что среди выданных банкнот не хватало одной купюры 5 000 ₽. ATM принадлежит стороннему банку."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Кировская область",
+      "relationship_years": 6.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3119",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 7102.11,
+        "available_balance": 7102.11,
+        "linked_account_id": "SYN-ACC-4119"
+      },
+      {
+        "product_id": "SYN-ACC-4119",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 7102.11,
+        "available_balance": 7102.11
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "ATM_EXCEPTION",
+      "source_topic": "atm_exception",
+      "ledger_balance": 7102.11,
+      "available_balance": 7102.11,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1014",
+          "type": "atm_withdrawal",
+          "atm_id": "ATM-EXT-9910",
+          "location": "Вокзал Центральный",
+          "posted_at": "2026-07-14T23:58:00+03:00",
+          "amount": -30000.0,
+          "currency": "RUB",
+          "status": "posted",
+          "network_response_code": "00"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "atm_receipt",
+          "summary": "Чек отражает выдачу 30 000 ₽."
+        },
+        {
+          "type": "customer_statement",
+          "summary": "Клиент пересчитал деньги сразу у банкомата и сообщил о недостаче одной купюры."
+        }
+      ],
+      "missing_information": [
+        "external_atm_journal",
+        "dispensed_denomination_log",
+        "cash_reconciliation_result",
+        "partial_retract_indicator"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-119"
+    }
+  },
+  {
+    "case_id": "VAL-DC-020",
+    "client_id": "SYN-CL-9220",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неавторизованная операция",
+    "created_at": "2026-07-17T19:11:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент оспаривает три небольших оплаты TAXIWAY по 690 ₽, 740 ₽ и 710 ₽. Все операции проведены через сохранённый card-on-file token. Клиент регулярно пользуется этим сервисом, но утверждает, что в указанный вечер находился дома и поездки не заказывал. В семейном профиле сервиса добавлен второй взрослый пользователь.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-17T19:11:00+03:00",
+        "text": "Заблокировать дальнейшие списания и вернуть 2 140 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-17T19:11:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент оспаривает три небольших оплаты TAXIWAY по 690 ₽, 740 ₽ и 710 ₽. Все операции проведены через сохранённый card-on-file token. Клиент регулярно пользуется этим сервисом, но утверждает, что в указанный вечер находился дома и поездки не заказывал. В семейном профиле сервиса добавлен второй взрослый пользователь."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Курская область",
+      "relationship_years": 7.5,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3120",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 36120.0,
+        "available_balance": 36120.0,
+        "linked_account_id": "SYN-ACC-4120"
+      },
+      {
+        "product_id": "SYN-ACC-4120",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 36120.0,
+        "available_balance": 36120.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "UNAUTHORIZED_CARD_TRANSACTION",
+      "source_topic": "unauthorized_card_transaction",
+      "ledger_balance": 36120.0,
+      "available_balance": 36120.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-VAL-1015-A",
+          "type": "card_purchase",
+          "merchant": "TAXIWAY",
+          "channel": "merchant_card_on_file",
+          "posted_at": "2026-07-16T20:21:00+03:00",
+          "amount": -690.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1015-B",
+          "type": "card_purchase",
+          "merchant": "TAXIWAY",
+          "channel": "merchant_card_on_file",
+          "posted_at": "2026-07-16T21:02:00+03:00",
+          "amount": -740.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-VAL-1015-C",
+          "type": "card_purchase",
+          "merchant": "TAXIWAY",
+          "channel": "merchant_card_on_file",
+          "posted_at": "2026-07-16T22:17:00+03:00",
+          "amount": -710.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "type": "customer_statement",
+          "summary": "Клиент отрицает поездки и просит проверить семейный профиль."
+        },
+        {
+          "type": "merchant_profile_summary",
+          "summary": "В аккаунте присутствует второй взрослый участник, но история заказов ещё не предоставлена."
+        }
+      ],
+      "missing_information": [
+        "merchant_trip_records",
+        "second_user_statement",
+        "token_scope",
+        "device_and_ip_for_each_booking",
+        "customer_benefit_or_relationship"
+      ],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-120"
+    }
+  }
+]

@@ -1,0 +1,366 @@
+[
+  {
+    "expertise_type": "account_balance_analysis",
+    "title": "Анализ остатка и технической задолженности",
+    "department": "Операционное сопровождение счетов",
+    "description": "Проверяет фактический, доступный и технический остаток, комиссии и иные причины задолженности, препятствующей закрытию счёта.",
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "ledger_balance",
+      "available_balance",
+      "fee_events"
+    ],
+    "possible_results": [
+      "zero_balance_confirmed",
+      "customer_debt_confirmed",
+      "technical_overdraft_confirmed",
+      "manual_reconciliation_required"
+    ]
+  },
+  {
+    "expertise_type": "card_transaction_status_check",
+    "title": "Проверка незавершённых карточных операций",
+    "department": "Процессинг дебетовых карт",
+    "description": "Определяет наличие активных авторизаций, холдов, незавершённых возвратов и срок их ожидаемого завершения или освобождения.",
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "card_id",
+      "authorization_events",
+      "pending_operations"
+    ],
+    "possible_results": [
+      "no_pending_operations",
+      "active_hold_confirmed",
+      "pending_refund_confirmed",
+      "processing_incident_suspected"
+    ]
+  },
+  {
+    "expertise_type": "account_restriction_check",
+    "title": "Проверка ограничений и арестов по счёту",
+    "department": "Комплаенс и исполнительные производства",
+    "description": "Проверяет действующие ограничения, аресты и обязательные основания, при которых закрытие счёта временно или полностью недоступно.",
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "restriction_flags",
+      "restriction_reference",
+      "restriction_status"
+    ],
+    "possible_results": [
+      "no_restrictions",
+      "active_restriction_confirmed",
+      "restriction_release_pending",
+      "manual_legal_review_required"
+    ]
+  },
+  {
+    "expertise_type": "account_closure_readiness_check",
+    "title": "Комплексная проверка готовности счёта к закрытию",
+    "department": "Операционное сопровождение счетов",
+    "description": "Проверяет совокупность незавершённых платежей, ожидаемых возвратов, активных поручений и открытых споров, которые могут изменить итоговый остаток или порядок обслуживания после закрытия счёта.",
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "closure_check_code",
+      "pending_operations",
+      "closure_blockers"
+    ],
+    "possible_results": [
+      "ready_for_closure",
+      "outstanding_items_confirmed",
+      "open_dispute_servicing_required",
+      "manual_closure_review_required"
+    ]
+  },
+  {
+    "expertise_type": "representative_authority_check",
+    "title": "Проверка полномочий представителя на закрытие счёта",
+    "department": "Правовое сопровождение клиентских операций",
+    "description": "Проверяет, позволяет ли синтетическая доверенность или иной документ представителя закрыть банковский счёт и распорядиться итоговым остатком без прямого участия владельца.",
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "representative_id",
+      "authority_document",
+      "requested_action"
+    ],
+    "possible_results": [
+      "closure_authority_confirmed",
+      "funds_authority_only",
+      "customer_confirmation_required",
+      "manual_legal_review_required"
+    ]
+  },
+  {
+    "expertise_type": "dispute_qualification_check",
+    "title": "Квалификация спора и канала возврата",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет корректный workflow: unauthorized, merchant dispute, refund issue, ATM exception, recurring payment или informational inquiry.",
+    "required_inputs": [
+      "reason"
+    ],
+    "possible_results": [
+      "ELIGIBLE_FOR_DISPUTE",
+      "UNAUTHORIZED_CLAIM_PATH",
+      "ATM_EXCEPTION_PATH",
+      "REFUND_TRACE_FIRST",
+      "MERCHANT_CONTACT_REQUIRED",
+      "INFORMATIONAL_ONLY",
+      "OUT_OF_TIME",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "card_fraud_review",
+    "title": "Проверка неавторизованной операции",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Анализирует токены, аутентификацию, устройства, географию, таймлайн уведомления и статус карты.",
+    "required_inputs": [
+      "transaction_id",
+      "customer_id"
+    ],
+    "possible_results": [
+      "UNAUTHORIZED_LIKELY",
+      "CUSTOMER_AUTHENTICATION_CONFIRMED",
+      "TOKEN_COMPROMISE_SUSPECTED",
+      "MIXED_EVIDENCE",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "refund_trace_check",
+    "title": "Трассировка и сверка возврата",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Ищет полный, частичный или ошибочно сопоставленный refund по исходной покупке.",
+    "required_inputs": [
+      "original_transaction_id",
+      "expected_refund_amount"
+    ],
+    "possible_results": [
+      "REFUND_FOUND",
+      "PARTIAL_REFUND_FOUND",
+      "REFUND_NOT_FOUND",
+      "REFUND_PENDING",
+      "REFUND_MATCHED_TO_OTHER_TRANSACTION",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "atm_exception_investigation",
+    "title": "Расследование ATM и cash-in исключений",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Сопоставляет account posting, ATM journal, dispenser/cash-acceptor events и кассовую сверку.",
+    "required_inputs": [
+      "transaction_id",
+      "atm_id"
+    ],
+    "possible_results": [
+      "EXCEPTION_CONFIRMED",
+      "NO_EXCEPTION_FOUND",
+      "CASH_SURPLUS_FOUND",
+      "EXTERNAL_ATM_OWNER_PENDING",
+      "PARTIAL_EXCEPTION_CONFIRMED",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "recurring_payment_check",
+    "title": "Проверка регулярных платежей",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет rail регулярного списания и доступные действия для будущих и уже проведённых операций.",
+    "required_inputs": [
+      "merchant"
+    ],
+    "possible_results": [
+      "CANCELLATION_VALID",
+      "FUTURE_BLOCK_AVAILABLE",
+      "ALREADY_PRESENTED",
+      "WRONG_RAIL",
+      "MERCHANT_AGREEMENT_ACTIVE",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "legal_ownership_check",
+    "title": "Проверка legal и ownership ограничений",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет ограничения из-за court/legal hold, спора совладельцев, полномочий или конфликтных инструкций.",
+    "required_inputs": [
+      "account_id"
+    ],
+    "possible_results": [
+      "NO_LEGAL_BLOCK",
+      "LEGAL_BLOCK",
+      "PARTIAL_LEGAL_BLOCK",
+      "OWNERSHIP_CONFLICT_CONFIRMED",
+      "POWERS_NOT_CONFIRMED",
+      "MANUAL_LEGAL_REVIEW",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "aml_sanctions_review",
+    "title": "AML, unusual activity и sanctions review",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Проверяет source of funds, unusual activity alert и санкционные совпадения. Финальное решение остаётся за compliance.",
+    "required_inputs": [
+      "account_id",
+      "review_type"
+    ],
+    "possible_results": [
+      "FALSE_POSITIVE",
+      "SOURCE_OF_FUNDS_CONFIRMED",
+      "RESTRICTION_CONFIRMED",
+      "DOCUMENTS_REQUIRED",
+      "ESCALATE_TO_INVESTIGATION",
+      "PROHIBITED_ACTION",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "dispute_evidence_assessment",
+    "title": "Оценка доказательств по merchant dispute",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Сопоставляет evidence клиента и merchant, включая representment, delivery, cancellation и service records.",
+    "required_inputs": [
+      "dispute_reason"
+    ],
+    "possible_results": [
+      "CUSTOMER_EVIDENCE_SUFFICIENT",
+      "MERCHANT_EVIDENCE_SUFFICIENT",
+      "MERCHANT_EVIDENCE_REBUTTED",
+      "CONFLICTING_EVIDENCE",
+      "PARTIAL_REMEDY_SUPPORTED",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "provisional_credit_check",
+    "title": "Проверка provisional credit",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет, должен ли временный credit стать постоянным, быть отозван или оставаться открытым.",
+    "required_inputs": [
+      "account_id",
+      "amount"
+    ],
+    "possible_results": [
+      "MAKE_PERMANENT",
+      "REVERSE_PROVISIONAL_CREDIT",
+      "KEEP_PENDING",
+      "PARTIAL_REVERSAL",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "fx_dcc_check",
+    "title": "Проверка FX и dynamic currency conversion",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет источник конвертации, согласие на DCC и корректность суммы.",
+    "required_inputs": [
+      "transaction_id"
+    ],
+    "possible_results": [
+      "ISSUER_FX_APPLIED_CORRECTLY",
+      "DCC_CONSENT_CONFIRMED",
+      "DCC_CONSENT_INSUFFICIENT",
+      "WRONG_CURRENCY_PRESENTED",
+      "AMOUNT_MISMATCH",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "vulnerability_service_review",
+    "title": "Vulnerability support и service recovery",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Проверяет accommodations, continuity, качество handoff и необходимость компенсации за service failure.",
+    "required_inputs": [
+      "customer_id",
+      "case_id"
+    ],
+    "possible_results": [
+      "STANDARD_HANDLING",
+      "ACCOMMODATION_REQUIRED",
+      "SPECIALIST_OWNER_REQUIRED",
+      "SERVICE_RECOVERY_REQUIRED",
+      "COMPENSATION_RECOMMENDED",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "deposit_hold_check",
+    "title": "Проверка deposit hold и returned deposit",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Определяет стадию депозита, условную availability, reversal и риск отрицательного баланса.",
+    "required_inputs": [
+      "transaction_id",
+      "account_id"
+    ],
+    "possible_results": [
+      "DEPOSIT_PENDING",
+      "FUNDS_PARTIALLY_AVAILABLE",
+      "DEPOSIT_POSTED_FINAL",
+      "DEPOSIT_RETURNED",
+      "RETURN_RISK_REMAINS",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "cash_deposit_reconciliation",
+    "title": "Сверка внесения наличных через устройство",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Сопоставляет заявленную клиентом сумму, данные cash-acceptor, изображения купюр, журнал устройства и кассовый излишек.",
+    "required_inputs": [
+      "transaction_id",
+      "atm_id",
+      "claimed_amount"
+    ],
+    "possible_results": [
+      "FULL_AMOUNT_CONFIRMED",
+      "PARTIAL_AMOUNT_CONFIRMED",
+      "NO_SURPLUS_FOUND",
+      "CASH_SURPLUS_MATCHED",
+      "DEVICE_EVIDENCE_CONFLICT",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "merchant_fulfillment_check",
+    "title": "Проверка исполнения обязательств продавцом",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Оценивает доставку, частичное исполнение, прекращение деятельности продавца и доступность альтернативного возмещения.",
+    "required_inputs": [
+      "transaction_id",
+      "claim_type"
+    ],
+    "possible_results": [
+      "NON_DELIVERY_CONFIRMED",
+      "PARTIAL_DELIVERY_CONFIRMED",
+      "MERCHANT_FULFILLMENT_CONFIRMED",
+      "MERCHANT_INSOLVENCY_INDICATED",
+      "ALTERNATIVE_REMEDY_AVAILABLE",
+      "CONFLICTING_EVIDENCE",
+      "NEED_MORE_INFORMATION"
+    ]
+  },
+  {
+    "expertise_type": "outstanding_payments_check",
+    "title": "Проверка незавершённых платёжных обязательств",
+    "department": "Экспертное сопровождение дебетовых карт",
+    "description": "Ищет ранее авторизованные карточные операции, bill-pay, чеки, возвраты и иные элементы, способные поступить после запроса на закрытие.",
+    "required_inputs": [
+      "account_id"
+    ],
+    "possible_results": [
+      "NO_OUTSTANDING_ITEMS",
+      "CARD_PRESENTMENT_PENDING",
+      "OUTSTANDING_DEBIT_FOUND",
+      "EXPECTED_CREDIT_FOUND",
+      "MULTIPLE_ITEMS_FOUND",
+      "CLOSURE_DELAY_REQUIRED",
+      "NEED_MORE_INFORMATION"
+    ]
+  }
+]

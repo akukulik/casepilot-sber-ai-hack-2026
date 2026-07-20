@@ -1,0 +1,4712 @@
+[
+  {
+    "case_id": "HIST-DC-001",
+    "client_id": "SYN-CL-1001",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-05-12T09:20:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент не смог закрыть рублёвый счёт дебетовой карты после списания годовой комиссии. В интерфейсе отображался нулевой остаток, но внутренний ledger содержал технический минус 149 рублей.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-12T09:20:00+03:00",
+        "text": "Карта уже заблокирована, денег на ней нет, но приложение пишет, что счёт закрыть нельзя."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-12T09:23:00+03:00",
+        "text": "Вижу расхождение между доступным и бухгалтерским остатком. Передам кейс на проверку технической задолженности."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-12T09:24:00+03:00",
+        "text": "Автозакрытие отклонено: ACCOUNT_BALANCE_NOT_ZERO."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Москва",
+      "relationship_years": 4.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2001",
+        "product_type": "debit_card",
+        "status": "blocked_by_client",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-3001"
+      },
+      {
+        "product_id": "SYN-ACC-3001",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": -149,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACCOUNT_BALANCE_NOT_ZERO",
+      "ledger_balance": -149,
+      "available_balance": 0,
+      "fee_events": [
+        {
+          "event_id": "SYN-FEE-001",
+          "type": "annual_service_fee",
+          "amount": 149,
+          "status": "posted_after_card_block"
+        }
+      ],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": []
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Запросить анализ расхождения между ledger и доступным остатком.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Подтверждённая причина отрицательного остатка и сумма урегулирования.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "После подтверждения технического характера комиссии выполнить корректировку и повторную проверку нулевого остатка.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Нулевой ledger balance и разрешение на закрытие.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "Минус 149 рублей возник из-за комиссии, проведённой после блокировки карты; задолженность признана технической.",
+        "evidence": [
+          "closure_check_code=ACCOUNT_BALANCE_NOT_ZERO",
+          "ledger_balance=-149",
+          "fee_event=SYN-FEE-001"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Техническая комиссия скорректирована, остаток обнулён, счёт закрыт после подтверждения сотрудником.",
+      "resolved_at": "2026-05-13T15:40:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-002",
+    "client_id": "SYN-CL-1002",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-05-26T14:05:00+03:00",
+    "priority": "high",
+    "case_description": "Закрытие счёта дебетовой карты было недоступно из-за активного холда по покупке, отменённой торговой точкой. Финансового списания не было, но авторизация на 8 740 рублей оставалась незавершённой.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-26T14:05:00+03:00",
+        "text": "Магазин отменил покупку неделю назад, сумма вернулась в доступный остаток, но счёт всё равно не закрывается."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-26T14:09:00+03:00",
+        "text": "По карте остаётся активная авторизация. Проверим статус холда и срок его освобождения в процессинге."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-26T14:10:00+03:00",
+        "text": "Автозакрытие отклонено: ACTIVE_AUTHORIZATION_HOLD."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Санкт-Петербург",
+      "relationship_years": 7.8,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "travel_deadline"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2002",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 12500,
+        "available_balance": 12500,
+        "linked_account_id": "SYN-ACC-3002"
+      },
+      {
+        "product_id": "SYN-ACC-3002",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": 12500,
+        "available_balance": 12500
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_AUTHORIZATION_HOLD",
+      "ledger_balance": 12500,
+      "available_balance": 12500,
+      "fee_events": [],
+      "authorization_events": [
+        {
+          "authorization_id": "SYN-AUTH-002",
+          "amount": 8740,
+          "merchant_category": "home_goods",
+          "status": "reversal_pending",
+          "expires_at": "2026-05-29T23:59:59+03:00"
+        }
+      ],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-002",
+          "type": "authorization_reversal",
+          "status": "processing"
+        }
+      ],
+      "restriction_flags": []
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Проверить авторизацию и незавершённый reversal в карточном процессинге.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Статус холда, срок автоматического освобождения или признак процессингового инцидента.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Дождаться освобождения холда либо передать инцидент на ручное завершение, затем повторить closure check.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Отсутствие активных авторизаций и доступность закрытия.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Активный холд связан с незавершённым reversal; процессинг подтвердил автоматическое освобождение 29 мая.",
+        "evidence": [
+          "authorization_id=SYN-AUTH-002",
+          "status=reversal_pending",
+          "expires_at=2026-05-29T23:59:59+03:00"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "После освобождения холда клиент перевёл остаток, сотрудник подтвердил закрытие счёта.",
+      "resolved_at": "2026-05-30T10:15:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-003",
+    "client_id": "SYN-CL-1003",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-06-03T11:30:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент запросил закрытие дебетового счёта с нулевым остатком, однако операция блокировалась действующим ограничением по исполнительному документу. Самостоятельное снятие ограничения банком было недоступно.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-03T11:30:00+03:00",
+        "text": "На счёте ноль, картой давно не пользуюсь. Почему банк не закрывает договор?"
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-03T11:34:00+03:00",
+        "text": "По счёту отображается внешнее ограничение. Проверим его статус и допустимые действия банка."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-03T11:35:00+03:00",
+        "text": "Автозакрытие отклонено: ACTIVE_ACCOUNT_RESTRICTION."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Казань",
+      "relationship_years": 2.1,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2003",
+        "product_type": "debit_card",
+        "status": "expired",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-3003"
+      },
+      {
+        "product_id": "SYN-ACC-3003",
+        "product_type": "current_account",
+        "status": "restricted",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACTIVE_ACCOUNT_RESTRICTION",
+      "ledger_balance": 0,
+      "available_balance": 0,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": [
+        "enforcement_hold"
+      ],
+      "restriction_reference": "SYN-ENF-2026-003",
+      "restriction_status": "active"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Подтвердить вид, статус и основание ограничения по счёту.",
+        "expertise_type": "account_restriction_check",
+        "expected_output": "Подтверждение действующего ограничения и допустимого порядка дальнейших действий.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сообщить сотруднику, что закрытие возможно только после получения основания для снятия ограничения.",
+        "expertise_type": "account_restriction_check",
+        "expected_output": "Зафиксированный статус ожидания снятия ограничения и корректная коммуникация клиенту.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "account_restriction_check",
+        "status": "confirmed",
+        "summary": "Ограничение SYN-ENF-2026-003 активно; банк не вправе снять его без внешнего документа.",
+        "evidence": [
+          "restriction_flag=enforcement_hold",
+          "restriction_reference=SYN-ENF-2026-003",
+          "restriction_status=active"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "После поступления синтетического документа о снятии ограничения счёт закрыт с подтверждением сотрудника.",
+      "resolved_at": "2026-06-10T16:50:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-004",
+    "client_id": "SYN-CL-1104",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-05-11T10:14:00+03:00",
+    "priority": "high",
+    "case_description": "После подачи заявления на закрытие и вывода остатка по дебетовому счёту поздно предъявилась ранее авторизованная оплата парковки на 240 рублей, а затем возникла техническая комиссия 46,40 рубля.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-11T10:14:00+03:00",
+        "text": "Я уже вывел остаток и подал заявление на закрытие, но теперь счёт показывает минус 286 рублей 40 копеек."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-11T10:18:00+03:00",
+        "text": "Проверю дату исходной авторизации, позднее предъявление и отдельно происхождение комиссии."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-11T10:19:00+03:00",
+        "text": "Закрытие приостановлено: ACCOUNT_BALANCE_NOT_ZERO; найдено позднее предъявление операции."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Тверская область",
+      "relationship_years": 3.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2104",
+        "product_type": "debit_card",
+        "status": "blocked_for_closure",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-3104"
+      },
+      {
+        "product_id": "SYN-ACC-3104",
+        "product_type": "current_account",
+        "status": "pending_closure",
+        "currency": "RUB",
+        "balance": -286.4,
+        "available_balance": -286.4
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "ACCOUNT_BALANCE_NOT_ZERO",
+      "ledger_balance": -286.4,
+      "available_balance": -286.4,
+      "fee_events": [
+        {
+          "event_id": "SYN-FEE-104",
+          "type": "technical_overdraft_fee",
+          "amount": 46.4,
+          "status": "posted"
+        }
+      ],
+      "authorization_events": [
+        {
+          "authorization_id": "SYN-AUTH-104",
+          "amount": 240,
+          "merchant_category": "parking",
+          "authorized_at": "2026-05-04T20:31:00+03:00",
+          "status": "late_presentment_posted",
+          "posted_at": "2026-05-10T01:18:00+03:00"
+        }
+      ],
+      "pending_operations": [],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "NEGATIVE_BALANCE",
+        "DELAYED_PRESENTMENT",
+        "FEE_DUE"
+      ]
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сверить дату авторизации покупки с датой заявления на закрытие и подтвердить позднее предъявление.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Подтверждённый жизненный цикл операции на 240 рублей.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Разделить обязательство клиента и техническую комиссию, затем определить сумму урегулирования.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Подтверждение долга 240 рублей и технического характера комиссии 46,40 рубля.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "После отмены технической комиссии и внесения 240 рублей повторно проверить нулевой остаток и закрыть счёт.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Нулевой остаток и снятый blocker закрытия.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Оплата парковки была авторизована до заявления и правомерно предъявлена позднее.",
+        "evidence": [
+          "authorization_id=SYN-AUTH-104",
+          "authorized_at=2026-05-04T20:31:00+03:00",
+          "posted_at=2026-05-10T01:18:00+03:00"
+        ]
+      },
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "Из минуса 286,40 рубля клиентское обязательство составляет 240 рублей, а комиссия 46,40 рубля признана технической.",
+        "evidence": [
+          "ledger_balance=-286.4",
+          "fee_event=SYN-FEE-104",
+          "closure_check_code=ACCOUNT_BALANCE_NOT_ZERO"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Техническая комиссия отменена, клиент внёс 240 рублей по ранее авторизованной покупке; после обнуления счёт закрыт.",
+      "resolved_at": "2026-05-19T18:47:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-005",
+    "client_id": "SYN-CL-1105",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-06-21T09:31:00+03:00",
+    "priority": "normal",
+    "case_description": "При запросе на закрытие счёта с видимым остатком 12 180 рублей обнаружились три ещё не завершённых элемента: офлайн-покупка, ожидаемый возврат и заранее созданный платёж поставщику услуг.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-21T09:31:00+03:00",
+        "text": "Переведите окончательный остаток и закройте счёт, но я жду возврат за билет."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-21T09:36:00+03:00",
+        "text": "Кроме возврата вижу офлайн-покупку и платёж по расписанию. До их отражения итоговый остаток нельзя рассчитать точно."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-21T09:37:00+03:00",
+        "text": "Закрытие приостановлено: MULTIPLE_OUTSTANDING_ITEMS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Самарская область",
+      "relationship_years": 6.1,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "relocation_deadline"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2105",
+        "product_type": "debit_card",
+        "status": "blocked_for_closure",
+        "currency": "RUB",
+        "balance": 12180,
+        "available_balance": 12180,
+        "linked_account_id": "SYN-ACC-3105"
+      },
+      {
+        "product_id": "SYN-ACC-3105",
+        "product_type": "current_account",
+        "status": "pending_closure",
+        "currency": "RUB",
+        "balance": 12180,
+        "available_balance": 12180
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "MULTIPLE_OUTSTANDING_ITEMS",
+      "ledger_balance": 12180,
+      "available_balance": 12180,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [
+        {
+          "operation_id": "SYN-OP-105A",
+          "type": "offline_card_presentment",
+          "amount": 1760,
+          "status": "awaiting_presentment"
+        },
+        {
+          "operation_id": "SYN-OP-105B",
+          "type": "merchant_refund",
+          "amount": 3200,
+          "status": "expected"
+        },
+        {
+          "operation_id": "SYN-OP-105C",
+          "type": "scheduled_bill_pay",
+          "amount": 4500,
+          "status": "scheduled"
+        }
+      ],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "OFFLINE_PRESENTMENT",
+        "EXPECTED_REFUND",
+        "SCHEDULED_BILL_PAY"
+      ]
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Проверить все незавершённые элементы, способные изменить окончательный остаток.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Полный перечень ожидаемых дебетов и кредитов.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Перевести счёт в ожидание закрытия и не допускать новых клиентских операций до завершения найденных элементов.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Зафиксированный набор из трёх контролируемых операций.",
+        "requires_confirmation": true
+      },
+      {
+        "step": 3,
+        "action": "После отражения операций рассчитать и перевести окончательный остаток, затем повторить проверку готовности.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Итоговый остаток 9 120 рублей и отсутствие blocker-ов.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "account_closure_readiness_check",
+        "status": "confirmed",
+        "summary": "Подтверждены офлайн-покупка 1 760 рублей, возврат 3 200 рублей и платёж 4 500 рублей.",
+        "evidence": [
+          "pending_operation=SYN-OP-105A",
+          "pending_operation=SYN-OP-105B",
+          "pending_operation=SYN-OP-105C"
+        ]
+      },
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "После завершения всех трёх элементов окончательный остаток составил 9 120 рублей.",
+        "evidence": [
+          "initial_balance=12180",
+          "posted_debits=6260",
+          "posted_credits=3200",
+          "final_balance=9120"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "После завершения офлайн-покупки, возврата и платежа 9 120 рублей переведены по синтетической инструкции клиента, счёт закрыт.",
+      "resolved_at": "2026-06-28T15:47:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-006",
+    "client_id": "SYN-CL-1106",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "created_at": "2026-06-12T09:05:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент хотел закрыть счёт с нулевым остатком, сохранив открытый спор по недоставленному товару; для возможного позднего зачисления требовался отдельный синтетический servicing record.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-12T09:05:00+03:00",
+        "text": "Счёт мне больше не нужен, но я не хочу потерять спор на 34 700 рублей."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-12T09:10:00+03:00",
+        "text": "Проверю, можно ли отделить закрытие продукта от обслуживания уже открытого спора и куда направить возможный возврат."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-12T09:11:00+03:00",
+        "text": "Автозакрытие отклонено: OPEN_DISPUTE_SERVICING_REQUIRED."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Новосибирская область",
+      "relationship_years": 7.4,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-2106",
+        "product_type": "debit_card",
+        "status": "blocked_for_closure",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-3106"
+      },
+      {
+        "product_id": "SYN-ACC-3106",
+        "product_type": "current_account",
+        "status": "closure_requested",
+        "currency": "RUB",
+        "balance": 0,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "closure_check_code": "OPEN_DISPUTE_SERVICING_REQUIRED",
+      "ledger_balance": 0,
+      "available_balance": 0,
+      "fee_events": [],
+      "authorization_events": [],
+      "pending_operations": [],
+      "restriction_flags": [],
+      "closure_blockers": [
+        "OPEN_MERCHANT_DISPUTE"
+      ],
+      "open_disputes": [
+        {
+          "dispute_id": "SYN-DSP-106",
+          "amount": 34700,
+          "status": "investigation_open",
+          "servicing_after_closure_supported": true
+        }
+      ],
+      "alternate_credit_instruction_id": "SYN-INSTR-106"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Подтвердить отсутствие обычных незавершённых операций и определить требования к обслуживанию открытого спора.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Подтверждение отдельного post-closure servicing path.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Зафиксировать синтетическую инструкцию для возможного результата спора и закрыть продукт с сохранением servicing record.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Закрытый счёт и активная запись сопровождения спора.",
+        "requires_confirmation": true
+      },
+      {
+        "step": 3,
+        "action": "После успешного завершения спора направить сумму по сохранённой инструкции и завершить запись сопровождения.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Зачисление результата спора на альтернативный синтетический счёт.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "account_closure_readiness_check",
+        "status": "confirmed",
+        "summary": "Незавершённых платежей нет; открытый спор допускает обслуживание после закрытия через отдельную запись.",
+        "evidence": [
+          "dispute_id=SYN-DSP-106",
+          "servicing_after_closure_supported=true",
+          "alternate_credit_instruction_id=SYN-INSTR-106"
+        ]
+      },
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Результат спора на 34 700 рублей зачислен в settlement-контур и доступен для перевода по инструкции.",
+        "evidence": [
+          "dispute_id=SYN-DSP-106",
+          "dispute_result=customer_credit",
+          "credit_amount=34700"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Счёт закрыт без прекращения спора; после его успешного завершения 34 700 рублей перечислены по сохранённой синтетической инструкции.",
+      "resolved_at": "2026-06-18T18:12:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-007",
+    "client_id": "SYN-CL-1207",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Возврат по карточной операции",
+    "created_at": "2026-02-12T09:18:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент отменил бронирование апартаментов через сервис TravelNest. Продавец подтвердил полный возврат 48 600 ₽, но на счёт поступил только кредит 31 400 ₽. В письме продавца указаны два refund reference, однако в выписке виден один возврат.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-02-12T09:18:00+03:00",
+        "text": "Найти недостающую часть возврата за отменённое бронирование и зачислить её на счёт."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-02-12T09:18:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент отменил бронирование апартаментов через сервис TravelNest. Продавец подтвердил полный возврат 48 600 ₽, но на счёт поступил только кредит 31 400 ₽. В письме продавца указаны два refund reference, однако в выписке виден один возврат."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-02-12T09:18:00+03:00",
+        "text": "Диагностический код синтетического кейса: SECOND_REFUND_NOT_SUBMITTED_BY_MERCHANT."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Мурманская область",
+      "relationship_years": 6.1,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3007",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 84215.73,
+        "available_balance": 84215.73,
+        "linked_account_id": "SYN-ACC-4007"
+      },
+      {
+        "product_id": "SYN-ACC-4007",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 84215.73,
+        "available_balance": 84215.73
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "SECOND_REFUND_NOT_SUBMITTED_BY_MERCHANT",
+      "source_topic": "refund_not_received",
+      "ledger_balance": 84215.73,
+      "available_balance": 84215.73,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-880013",
+          "type": "card_purchase",
+          "merchant": "TRAVELNEST*APART",
+          "mcc": "7011",
+          "authorization_at": "2026-01-18T14:07:00+03:00",
+          "posted_at": "2026-01-20T03:22:00+03:00",
+          "amount": -48600.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-880611",
+          "type": "refund",
+          "merchant": "TRAVELNEST*APART",
+          "posted_at": "2026-02-05T06:11:00+03:00",
+          "amount": 31400.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_transaction_id": "TX-SYN-880013"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0001-A",
+          "type": "merchant_email",
+          "summary": "Подтверждён полный возврат 48 600 ₽ двумя частями: 31 400 ₽ и 17 200 ₽."
+        },
+        {
+          "evidence_id": "EV-0001-B",
+          "type": "account_statement",
+          "summary": "Найден только возврат 31 400 ₽."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-007"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Связать покупку, найденный refund и подтверждение продавца.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Найден возврат 31 400 ₽; недостающая сумма 17 200 ₽ не обнаружена.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить полный и частичный refund по счёту.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим спор по неполученному возврату на недостающую сумму.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Открыть mock-dispute только на 17 200 ₽.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим спор по неполученному возврату на недостающую сумму.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После подтверждения результата выполнить mock-credit недостающей суммы.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим спор по неполученному возврату на недостающую сумму.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Отправить сотруднику итог и основание частичного, а не полного возмещения.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим спор по неполученному возврату на недостающую сумму.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "refund_trace_check",
+        "status": "confirmed",
+        "summary": "Найден возврат 31 400 ₽; недостающая сумма 17 200 ₽ не обнаружена.",
+        "evidence": [
+          "result_code=PARTIAL_REFUND_FOUND",
+          "source_case=HC-2026-0001"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Допустим спор по неполученному возврату на недостающую сумму.",
+        "evidence": [
+          "result_code=ELIGIBLE_FOR_DISPUTE",
+          "source_case=HC-2026-0001"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "На счёт синтетически зачислено 17 200 ₽; полный возврат составил 48 600 ₽.",
+      "resolved_at": "2026-02-17T16:42:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-008",
+    "client_id": "SYN-CL-1208",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Холд и предавторизация",
+    "created_at": "2026-03-03T18:26:00+03:00",
+    "priority": "normal",
+    "case_description": "После бронирования автомобиля у DriveHarbor был установлен hold 72 000 ₽. Клиент отменил бронирование в тот же день и предоставил письмо об отмене. Через шесть календарных дней операция всё ещё отображалась как pending, из-за чего доступного остатка не хватало для оплаты авиабилетов.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-03-03T18:26:00+03:00",
+        "text": "Освободить 72 000 ₽, заблокированные прокатной компанией после отмены бронирования."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-03-03T18:26:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: После бронирования автомобиля у DriveHarbor был установлен hold 72 000 ₽. Клиент отменил бронирование в тот же день и предоставил письмо об отмене. Через шесть календарных дней операция всё ещё отображалась как pending, из-за чего доступного остатка не хватало для оплаты авиабилетов."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-03-03T18:26:00+03:00",
+        "text": "Диагностический код синтетического кейса: REVERSAL_RECEIVED_BUT_HOLD_NOT_RELEASED."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Орловская область",
+      "relationship_years": 6.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3008",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 123804.1,
+        "available_balance": 51804.1,
+        "linked_account_id": "SYN-ACC-4008"
+      },
+      {
+        "product_id": "SYN-ACC-4008",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 123804.1,
+        "available_balance": 51804.1
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "REVERSAL_RECEIVED_BUT_HOLD_NOT_RELEASED",
+      "source_topic": "pending_authorization",
+      "ledger_balance": 123804.1,
+      "available_balance": 51804.1,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-910040",
+          "type": "card_authorization",
+          "merchant": "DRIVEHARBOR RENTAL",
+          "mcc": "7512",
+          "authorization_at": "2026-02-26T11:51:00+03:00",
+          "amount": -72000.0,
+          "currency": "RUB",
+          "status": "pending",
+          "reversal_status": "received_valid"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0002-A",
+          "type": "merchant_cancellation",
+          "summary": "Бронирование отменено до выдачи автомобиля."
+        },
+        {
+          "evidence_id": "EV-0002-B",
+          "type": "authorization_reversal_record",
+          "summary": "В карточном процессинге найден корректный reversal."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "PENDING_CARD_AUTHORIZATION"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-008"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Проверить, что операция не перешла в posted.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Есть подтверждённый reversal; разрешено mock-снятие hold.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Подтвердить валидность reversal и отмены бронирования.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Других удержаний и незавершённых дебетов нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Запросить hold review.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Других удержаний и незавершённых дебетов нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Выполнить mock-release hold.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Других удержаний и незавершённых дебетов нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Повторно сверить available balance.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Других удержаний и незавершённых дебетов нет.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Есть подтверждённый reversal; разрешено mock-снятие hold.",
+        "evidence": [
+          "result_code=RELEASE_ALLOWED",
+          "source_case=HC-2026-0002"
+        ]
+      },
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "Других удержаний и незавершённых дебетов нет.",
+        "evidence": [
+          "result_code=HOLD_IS_SOLE_DIFFERENCE",
+          "source_case=HC-2026-0002"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Hold снят, доступный баланс увеличен до 123 804,10 ₽.",
+      "resolved_at": "2026-03-04T12:09:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-009",
+    "client_id": "SYN-CL-1209",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Операция в банкомате",
+    "created_at": "2026-03-21T07:43:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент снимал 15 000 ₽ в банкомате стороннего банка в торговом центре. После звука пересчёта устройство показало ошибку и карту вернуло, но наличные не выдало. Дебет по счёту стал окончательным на следующий день.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-03-21T07:43:00+03:00",
+        "text": "Вернуть 15 000 ₽, списанные после неуспешного снятия наличных."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-03-21T07:43:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент снимал 15 000 ₽ в банкомате стороннего банка в торговом центре. После звука пересчёта устройство показало ошибку и карту вернуло, но наличные не выдало. Дебет по счёту стал окончательным на следующий день."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-03-21T07:43:00+03:00",
+        "text": "Диагностический код синтетического кейса: ATM_DISPENSER_FAULT_WITH_POSTED_DEBIT."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Пензенская область",
+      "relationship_years": 7.5,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3009",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 6940.55,
+        "available_balance": 6940.55,
+        "linked_account_id": "SYN-ACC-4009"
+      },
+      {
+        "product_id": "SYN-ACC-4009",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 6940.55,
+        "available_balance": 6940.55
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "ATM_DISPENSER_FAULT_WITH_POSTED_DEBIT",
+      "source_topic": "atm_exception",
+      "ledger_balance": 6940.55,
+      "available_balance": 6940.55,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-244981",
+          "type": "atm_withdrawal",
+          "atm_id": "ATM-EXT-8841",
+          "location": "ТЦ Северный Парк",
+          "authorization_at": "2026-03-20T19:16:00+03:00",
+          "posted_at": "2026-03-21T02:05:00+03:00",
+          "amount": -15000.0,
+          "currency": "RUB",
+          "status": "posted",
+          "network_response_code": "00"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0003-A",
+          "type": "customer_atm_receipt",
+          "summary": "Чек не выдан; клиент сообщил точное время и адрес."
+        },
+        {
+          "evidence_id": "EV-0003-B",
+          "type": "external_atm_owner_response",
+          "summary": "Журнал зафиксировал dispenser fault и retract без выдачи клиенту."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-009"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Открыть ATM exception с точными реквизитами.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Наличные клиенту не выданы; дебет подлежит возврату.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Запросить подтверждение у владельца банкомата.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Наличные клиенту не выданы; дебет подлежит возврату.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Сверить отсутствие автоматического reversal.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Наличные клиенту не выданы; дебет подлежит возврату.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Выполнить mock-recredit 15 000 ₽.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Наличные клиенту не выданы; дебет подлежит возврату.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "atm_exception_investigation",
+        "status": "confirmed",
+        "summary": "Наличные клиенту не выданы; дебет подлежит возврату.",
+        "evidence": [
+          "result_code=EXCEPTION_CONFIRMED",
+          "source_case=HC-2026-0003"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "15 000 ₽ возвращены на счёт.",
+      "resolved_at": "2026-03-29T15:28:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-010",
+    "client_id": "SYN-CL-1210",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Дублирование карточной операции",
+    "created_at": "2026-04-08T13:02:00+03:00",
+    "priority": "normal",
+    "case_description": "В выписке клиент увидел две похожие операции ресторана Olive Yard: 6 200 ₽ и 6 780 ₽ с разницей в сутки. Клиент считал вторую операцию дубликатом. Ресторан сообщил, что первая запись была авторизацией без чаевых, а вторая — финальным клирингом с добавленными 580 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-04-08T13:02:00+03:00",
+        "text": "Вернуть повторное списание 6 780 ₽ в ресторане."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-04-08T13:02:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: В выписке клиент увидел две похожие операции ресторана Olive Yard: 6 200 ₽ и 6 780 ₽ с разницей в сутки. Клиент считал вторую операцию дубликатом. Ресторан сообщил, что первая запись была авторизацией без чаевых, а вторая — финальным клирингом с добавленными 580 ₽."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-04-08T13:02:00+03:00",
+        "text": "Диагностический код синтетического кейса: AUTHORIZATION_AND_FINAL_PRESENTMENT_CONFUSION."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Псковская область",
+      "relationship_years": 8.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3010",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 46790.12,
+        "available_balance": 46790.12,
+        "linked_account_id": "SYN-ACC-4010"
+      },
+      {
+        "product_id": "SYN-ACC-4010",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 46790.12,
+        "available_balance": 46790.12
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "AUTHORIZATION_AND_FINAL_PRESENTMENT_CONFUSION",
+      "source_topic": "duplicate_transaction",
+      "ledger_balance": 46790.12,
+      "available_balance": 46790.12,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-312901",
+          "type": "card_authorization",
+          "merchant": "OLIVE YARD",
+          "authorization_at": "2026-04-05T21:14:00+03:00",
+          "amount": -6200.0,
+          "currency": "RUB",
+          "status": "released"
+        },
+        {
+          "transaction_id": "TX-SYN-313842",
+          "type": "card_purchase",
+          "merchant": "OLIVE YARD",
+          "posted_at": "2026-04-06T23:51:00+03:00",
+          "amount": -6780.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_authorization_id": "TX-SYN-312901"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0004-A",
+          "type": "merchant_receipt",
+          "summary": "Счёт 6 200 ₽, чаевые 580 ₽, итог 6 780 ₽; подпись клиента присутствует."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-010"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сопоставить authorization и final presentment.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Одна released authorization и один final presentment; дубликат отсутствует.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить реальное влияние на баланс.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для dispute нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Сверить итоговую сумму с чеком.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для dispute нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Закрыть без финансовой корректировки и предоставить объяснение сотруднику.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для dispute нет.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Одна released authorization и один final presentment; дубликат отсутствует.",
+        "evidence": [
+          "result_code=SINGLE_SETTLED_TRANSACTION",
+          "source_case=HC-2026-0004"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Оснований для dispute нет.",
+        "evidence": [
+          "result_code=INFORMATIONAL_ONLY",
+          "source_case=HC-2026-0004"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Финансовая корректировка не выполнена.",
+      "resolved_at": "2026-04-15T10:34:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-011",
+    "client_id": "SYN-CL-1211",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Регулярный платёж",
+    "created_at": "2026-04-19T11:37:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент отменил подписку FitCloud 28 марта и получил подтверждение. После перевыпуска карты 2 апреля сервис списал 3 490 ₽ 17 апреля по обновлённым card-on-file реквизитам. Клиент ожидал, что перевыпуск сам прекратит подписку.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-04-19T11:37:00+03:00",
+        "text": "Остановить будущие списания FitCloud и вернуть оплату после отмены подписки."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-04-19T11:37:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент отменил подписку FitCloud 28 марта и получил подтверждение. После перевыпуска карты 2 апреля сервис списал 3 490 ₽ 17 апреля по обновлённым card-on-file реквизитам. Клиент ожидал, что перевыпуск сам прекратит подписку."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-04-19T11:37:00+03:00",
+        "text": "Диагностический код синтетического кейса: MERCHANT_RECURRING_BILLING_AFTER_VALID_CANCELLATION."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Саратовская область",
+      "relationship_years": 1.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3011",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 17922.44,
+        "available_balance": 17922.44,
+        "linked_account_id": "SYN-ACC-4011"
+      },
+      {
+        "product_id": "SYN-ACC-4011",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 17922.44,
+        "available_balance": 17922.44
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_RECURRING_BILLING_AFTER_VALID_CANCELLATION",
+      "source_topic": "recurring_payment",
+      "ledger_balance": 17922.44,
+      "available_balance": 17922.44,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-600771",
+          "type": "recurring_card_payment",
+          "merchant": "FITCLOUD",
+          "posted_at": "2026-04-17T05:03:00+03:00",
+          "amount": -3490.0,
+          "currency": "RUB",
+          "status": "posted",
+          "recurring_indicator": true
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0005-A",
+          "type": "subscription_cancellation_email",
+          "summary": "Подписка отменена 28 марта; доступ должен был завершиться 31 марта."
+        },
+        {
+          "evidence_id": "EV-0005-B",
+          "type": "merchant_correspondence",
+          "summary": "Продавец не ответил на два обращения в течение 10 дней."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-011"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Определить rail регулярного платежа.",
+        "expertise_type": "recurring_payment_check",
+        "expected_output": "Будущие списания можно заблокировать; posted item требует отдельного спора.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить отмену и попытки связи с merchant.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Есть подтверждение отмены до списания.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Установить mock merchant-specific block.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Есть подтверждение отмены до списания.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Открыть mock-dispute по posted списанию.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Есть подтверждение отмены до списания.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "После положительного исхода выполнить mock-credit.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Есть подтверждение отмены до списания.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "recurring_payment_check",
+        "status": "confirmed",
+        "summary": "Будущие списания можно заблокировать; posted item требует отдельного спора.",
+        "evidence": [
+          "result_code=CANCELLATION_VALID",
+          "source_case=HC-2026-0005"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Есть подтверждение отмены до списания.",
+        "evidence": [
+          "result_code=ELIGIBLE_FOR_DISPUTE",
+          "source_case=HC-2026-0005"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Будущие списания FitCloud заблокированы, 3 490 ₽ возвращены.",
+      "resolved_at": "2026-05-06T17:20:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-012",
+    "client_id": "SYN-CL-1212",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Полномочия и совместное владение",
+    "created_at": "2026-06-02T16:05:00+03:00",
+    "priority": "critical",
+    "case_description": "Один из двух владельцев совместного счёта заявил, что второй владелец переводит деньги без согласования, и потребовал закрыть его карту. Второй владелец в тот же день потребовал сохранить полный доступ и снять 180 000 ₽. По договору каждый совладелец ранее имел право распоряжаться счётом самостоятельно.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-02T16:05:00+03:00",
+        "text": "Разблокировать совместный счёт и закрыть вторую карту совладельца."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-02T16:05:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Один из двух владельцев совместного счёта заявил, что второй владелец переводит деньги без согласования, и потребовал закрыть его карту. Второй владелец в тот же день потребовал сохранить полный доступ и снять 180 000 ₽. По договору каждый совладелец ранее имел право распоряжаться счётом самостоятельно."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-02T16:05:00+03:00",
+        "text": "Диагностический код синтетического кейса: CONFLICTING_VALID_OWNER_INSTRUCTIONS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Смоленская область",
+      "relationship_years": 1.9,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3012",
+        "product_type": "debit_card",
+        "status": "temporarily_blocked",
+        "currency": "RUB",
+        "balance": 391204.77,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-4012"
+      },
+      {
+        "product_id": "SYN-ACC-4012",
+        "product_type": "current_account",
+        "status": "restricted_manual",
+        "currency": "RUB",
+        "balance": 391204.77,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CONFLICTING_VALID_OWNER_INSTRUCTIONS",
+      "source_topic": "ownership_conflict",
+      "ledger_balance": 391204.77,
+      "available_balance": 0,
+      "account_status": "restricted_manual",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-821100",
+          "type": "account_transfer",
+          "initiated_by": "CUS-SYN-90012",
+          "created_at": "2026-06-02T15:49:00+03:00",
+          "amount": -180000.0,
+          "currency": "RUB",
+          "status": "blocked_by_manual_restriction"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0007-A",
+          "type": "joint_account_mandate",
+          "summary": "До возникновения спора каждый совладелец имел самостоятельные полномочия."
+        },
+        {
+          "evidence_id": "EV-0007-B",
+          "type": "conflicting_contact_log",
+          "summary": "В один день получены несовместимые инструкции двух владельцев."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "CONFLICTING_OWNER_INSTRUCTIONS",
+        "OWNERSHIP_REVIEW"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-012"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Не квалифицировать спор как карточное мошенничество.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Требуется ручное урегулирование; одностороннее закрытие карты или выдача средств не допускаются.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Установить временный manual restriction на исходящие операции.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Закрытие и свободное распоряжение средствами заблокированы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Передать документы в ownership/legal review.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Закрытие и свободное распоряжение средствами заблокированы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Получить совместную инструкцию о разделении остатка и закрытии счёта.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Закрытие и свободное распоряжение средствами заблокированы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Выполнить два mock-перевода и закрыть обе карты и счёт.",
+        "expertise_type": "account_closure_readiness_check",
+        "expected_output": "Закрытие и свободное распоряжение средствами заблокированы.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "legal_ownership_check",
+        "status": "confirmed",
+        "summary": "Требуется ручное урегулирование; одностороннее закрытие карты или выдача средств не допускаются.",
+        "evidence": [
+          "result_code=OWNERSHIP_CONFLICT_CONFIRMED",
+          "source_case=HC-2026-0007"
+        ]
+      },
+      {
+        "expertise_type": "account_closure_readiness_check",
+        "status": "confirmed",
+        "summary": "Закрытие и свободное распоряжение средствами заблокированы.",
+        "evidence": [
+          "result_code=OWNERSHIP_BLOCK",
+          "source_case=HC-2026-0007"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "После получения подписанной совместной инструкции остаток разделён, карты и счёт закрыты.",
+      "resolved_at": "2026-06-13T13:56:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-013",
+    "client_id": "SYN-CL-1213",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Ограничение операций",
+    "created_at": "2026-06-16T08:42:00+03:00",
+    "priority": "critical",
+    "case_description": "После входящего перевода 640 000 ₽ от страховой компании счёт клиента был ограничен. Клиент пытался оплатить 215 000 ₽ за обучение, но операция была отклонена. Назначение входящего платежа содержало сокращённое название страховой выплаты, которое система сопоставила с нетипичным коммерческим оборотом.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-16T08:42:00+03:00",
+        "text": "Разблокировать дебетовый счёт и провести оплату обучения."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-16T08:42:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: После входящего перевода 640 000 ₽ от страховой компании счёт клиента был ограничен. Клиент пытался оплатить 215 000 ₽ за обучение, но операция была отклонена. Назначение входящего платежа содержало сокращённое название страховой выплаты, которое система сопоставила с нетипичным коммерческим оборотом."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-16T08:42:00+03:00",
+        "text": "Диагностический код синтетического кейса: AML_ALERT_FALSE_POSITIVE_ON_INSURANCE_PROCEEDS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Томская область",
+      "relationship_years": 2.6,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3013",
+        "product_type": "debit_card",
+        "status": "restricted",
+        "currency": "RUB",
+        "balance": 712844.92,
+        "available_balance": 72844.92,
+        "linked_account_id": "SYN-ACC-4013"
+      },
+      {
+        "product_id": "SYN-ACC-4013",
+        "product_type": "current_account",
+        "status": "restricted_review",
+        "currency": "RUB",
+        "balance": 712844.92,
+        "available_balance": 72844.92
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "AML_ALERT_FALSE_POSITIVE_ON_INSURANCE_PROCEEDS",
+      "source_topic": "aml_restriction",
+      "ledger_balance": 712844.92,
+      "available_balance": 72844.92,
+      "account_status": "restricted_review",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-901122",
+          "type": "incoming_transfer",
+          "counterparty": "SAFEGUARD INSURANCE",
+          "posted_at": "2026-06-15T17:04:00+03:00",
+          "amount": 640000.0,
+          "currency": "RUB",
+          "status": "posted",
+          "payment_purpose": "Выплата по страховому событию CLM-99140"
+        },
+        {
+          "transaction_id": "TX-SYN-901190",
+          "type": "card_purchase",
+          "merchant": "ACADEMY NORTH",
+          "attempted_at": "2026-06-16T08:17:00+03:00",
+          "amount": -215000.0,
+          "currency": "RUB",
+          "status": "declined_restriction"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0008-A",
+          "type": "insurance_settlement_letter",
+          "summary": "Страховая компания подтверждает выплату 640 000 ₽ по ущербу автомобилю."
+        },
+        {
+          "evidence_id": "EV-0008-B",
+          "type": "claim_reference_match",
+          "summary": "Номер страхового дела совпадает с назначением перевода."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "AML_REVIEW"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-013"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Определить scope ограничения и недоступные действия frontline.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Собрать подтверждение источника средств.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Передать документы в AML review.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После решения выполнить mock-unrestrict.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Повторно проверить доступный баланс и возможность оплаты.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "aml_sanctions_review",
+        "status": "confirmed",
+        "summary": "Источник средств подтверждён; признаки запрещённой активности не выявлены.",
+        "evidence": [
+          "result_code=FALSE_POSITIVE",
+          "source_case=HC-2026-0008"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Ограничение снято, вся сумма стала доступна.",
+      "resolved_at": "2026-06-27T14:25:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-014",
+    "client_id": "SYN-CL-1214",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Временное возмещение",
+    "created_at": "2026-06-20T19:33:00+03:00",
+    "priority": "high",
+    "case_description": "По спору о неполученном кухонном комбайне банк ранее предоставил provisional credit 24 700 ₽. Продавец направил representment с фотографией коробки у двери и трек-номером. Клиент утверждал, что на фотографии другой подъезд, а подпись получателя отсутствует.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-20T19:33:00+03:00",
+        "text": "Сохранить временно возвращённые 24 700 ₽ за неполученный заказ."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-20T19:33:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: По спору о неполученном кухонном комбайне банк ранее предоставил provisional credit 24 700 ₽. Продавец направил representment с фотографией коробки у двери и трек-номером. Клиент утверждал, что на фотографии другой подъезд, а подпись получателя отсутствует."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-20T19:33:00+03:00",
+        "text": "Диагностический код синтетического кейса: DELIVERY_TO_WRONG_ADDRESS."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Ульяновская область",
+      "relationship_years": 3.3,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3014",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 56790.3,
+        "available_balance": 56790.3,
+        "linked_account_id": "SYN-ACC-4014"
+      },
+      {
+        "product_id": "SYN-ACC-4014",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 56790.3,
+        "available_balance": 56790.3
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "DELIVERY_TO_WRONG_ADDRESS",
+      "source_topic": "provisional_credit",
+      "ledger_balance": 56790.3,
+      "available_balance": 56790.3,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-700811",
+          "type": "card_purchase",
+          "merchant": "HOMECRAFT STORE",
+          "posted_at": "2026-05-03T02:41:00+03:00",
+          "amount": -24700.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-701090",
+          "type": "provisional_credit",
+          "posted_at": "2026-05-22T12:00:00+03:00",
+          "amount": 24700.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_transaction_id": "TX-SYN-700811"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0009-A",
+          "type": "merchant_representment",
+          "summary": "Трек-номер и фото коробки у двери без подписи."
+        },
+        {
+          "evidence_id": "EV-0009-B",
+          "type": "customer_building_photo",
+          "summary": "Номер подъезда и цвет двери не совпадают с merchant photo."
+        },
+        {
+          "evidence_id": "EV-0009-C",
+          "type": "carrier_response",
+          "summary": "GPS курьера указывает соседний дом."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "OPEN_DISPUTE"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-014"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сопоставить representment с исходным claim.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Представленные merchant доказательства опровергнуты независимыми данными перевозчика.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить адрес, GPS и подтверждение вручения.",
+        "expertise_type": "provisional_credit_check",
+        "expected_output": "Оснований отзывать provisional credit нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Передать rebuttal в dispute evidence review.",
+        "expertise_type": "provisional_credit_check",
+        "expected_output": "Оснований отзывать provisional credit нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Сделать provisional credit постоянным.",
+        "expertise_type": "provisional_credit_check",
+        "expected_output": "Оснований отзывать provisional credit нет.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "dispute_evidence_assessment",
+        "status": "confirmed",
+        "summary": "Представленные merchant доказательства опровергнуты независимыми данными перевозчика.",
+        "evidence": [
+          "result_code=MERCHANT_EVIDENCE_REBUTTED",
+          "source_case=HC-2026-0009"
+        ]
+      },
+      {
+        "expertise_type": "provisional_credit_check",
+        "status": "confirmed",
+        "summary": "Оснований отзывать provisional credit нет.",
+        "evidence": [
+          "result_code=MAKE_PERMANENT",
+          "source_case=HC-2026-0009"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "24 700 ₽ остались на счёте как окончательное возмещение.",
+      "resolved_at": "2026-07-03T11:10:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-015",
+    "client_id": "SYN-CL-1215",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Конвертация и DCC",
+    "created_at": "2026-06-24T10:51:00+03:00",
+    "priority": "normal",
+    "case_description": "В гостинице в Праге клиент оплатил 420 EUR, но терминал провёл операцию как 39 960 ₽. На чеке была строка DCC accepted и курс терминала, однако клиент утверждал, что сотрудник отеля не объяснил выбор валюты и быстро нажал подтверждение за него.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-24T10:51:00+03:00",
+        "text": "Пересчитать покупку в евро и вернуть разницу по курсу."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-24T10:51:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: В гостинице в Праге клиент оплатил 420 EUR, но терминал провёл операцию как 39 960 ₽. На чеке была строка DCC accepted и курс терминала, однако клиент утверждал, что сотрудник отеля не объяснил выбор валюты и быстро нажал подтверждение за него."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-24T10:51:00+03:00",
+        "text": "Диагностический код синтетического кейса: DCC_CONSENT_NOT_PROVABLE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Архангельская область",
+      "relationship_years": 4.0,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3015",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 104440.11,
+        "available_balance": 104440.11,
+        "linked_account_id": "SYN-ACC-4015"
+      },
+      {
+        "product_id": "SYN-ACC-4015",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 104440.11,
+        "available_balance": 104440.11
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "DCC_CONSENT_NOT_PROVABLE",
+      "source_topic": "fx_dispute",
+      "ledger_balance": 104440.11,
+      "available_balance": 104440.11,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-612230",
+          "type": "card_purchase",
+          "merchant": "HOTEL VLTAVA",
+          "mcc": "7011",
+          "transaction_currency": "RUB",
+          "merchant_local_currency": "EUR",
+          "merchant_local_amount": 420.0,
+          "posted_amount": -39960.0,
+          "posted_at": "2026-06-22T05:20:00+03:00",
+          "dcc_indicator": true,
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0010-A",
+          "type": "merchant_receipt",
+          "summary": "На чеке указан DCC, курс и две валюты; подпись клиента отсутствует."
+        },
+        {
+          "evidence_id": "EV-0010-B",
+          "type": "terminal_log",
+          "summary": "Выбор RUB подтверждён на терминале до PIN, но неизвестно, кто нажал кнопку."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-015"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Определить, где была выполнена конвертация.",
+        "expertise_type": "fx_dcc_check",
+        "expected_output": "Выбор DCC не подтверждён достаточно надёжно.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сверить DCC disclosure и доказательство выбора.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим dispute на разницу между DCC и базовой суммой.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Рассчитать спорную разницу 2 118 ₽.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим dispute на разницу между DCC и базовой суммой.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Открыть mock-dispute на разницу.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим dispute на разницу между DCC и базовой суммой.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Выполнить mock-credit после положительного решения.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Допустим dispute на разницу между DCC и базовой суммой.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "fx_dcc_check",
+        "status": "confirmed",
+        "summary": "Выбор DCC не подтверждён достаточно надёжно.",
+        "evidence": [
+          "result_code=DCC_CONSENT_INSUFFICIENT",
+          "source_case=HC-2026-0010"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Допустим dispute на разницу между DCC и базовой суммой.",
+        "evidence": [
+          "result_code=ELIGIBLE_FOR_DISPUTE",
+          "source_case=HC-2026-0010"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "На счёт зачислено 2 118 ₽.",
+      "resolved_at": "2026-06-25T16:03:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-016",
+    "client_id": "SYN-CL-1216",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Обслуживание наследников",
+    "created_at": "2026-06-29T14:16:00+03:00",
+    "priority": "high",
+    "case_description": "После смерти владельца счёт был ограничен для расходных операций. Через две недели авиакомпания вернула 74 300 ₽ за отменённые билеты. Дочь клиента предъявила свидетельство о праве на наследство только на часть имущества и просила перевести весь возврат на свой счёт.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-29T14:16:00+03:00",
+        "text": "Получить возврат за отменённую поездку, поступивший после смерти владельца счёта."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-29T14:16:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: После смерти владельца счёт был ограничен для расходных операций. Через две недели авиакомпания вернула 74 300 ₽ за отменённые билеты. Дочь клиента предъявила свидетельство о праве на наследство только на часть имущества и просила перевести весь возврат на свой счёт."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-29T14:16:00+03:00",
+        "text": "Диагностический код синтетического кейса: REFUND_POSTED_TO_ESTATE_ACCOUNT."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Белгородская область",
+      "relationship_years": 4.7,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3016",
+        "product_type": "debit_card",
+        "status": "permanently_blocked_deceased",
+        "currency": "RUB",
+        "balance": 182940.55,
+        "available_balance": 0,
+        "linked_account_id": "SYN-ACC-4016"
+      },
+      {
+        "product_id": "SYN-ACC-4016",
+        "product_type": "current_account",
+        "status": "estate_restricted",
+        "currency": "RUB",
+        "balance": 182940.55,
+        "available_balance": 0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "REFUND_POSTED_TO_ESTATE_ACCOUNT",
+      "source_topic": "deceased_customer",
+      "ledger_balance": 182940.55,
+      "available_balance": 0,
+      "account_status": "estate_restricted",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-720102",
+          "type": "refund",
+          "merchant": "SKYBRIDGE AIR",
+          "posted_at": "2026-06-14T06:03:00+03:00",
+          "amount": 74300.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0011-A",
+          "type": "death_certificate",
+          "summary": "Смерть владельца подтверждена."
+        },
+        {
+          "evidence_id": "EV-0011-B",
+          "type": "inheritance_certificate",
+          "summary": "Дочь имеет право на 1/2 остатка по счёту."
+        },
+        {
+          "evidence_id": "EV-0011-C",
+          "type": "estate_registry_extract",
+          "summary": "Второй наследник также имеет право на 1/2."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "DECEASED_CUSTOMER",
+        "ESTATE_REVIEW"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-016",
+      "representative": {
+        "customer_id": "CUS-SYN-EST-101",
+        "role": "heir",
+        "authentication_on_contact": "passed"
+      }
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Подтвердить статус владельца и блокировку карты.",
+        "expertise_type": "representative_authority_check",
+        "expected_output": "Заявитель вправе получить только половину доступного наследственного остатка.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить происхождение refund.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Распределение возможно только по наследственным долям.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Проверить наследственные полномочия и доли.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Распределение возможно только по наследственным долям.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Рассчитать долю каждого наследника.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Распределение возможно только по наследственным долям.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Выполнить два mock-перевода после получения документов второго наследника.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Распределение возможно только по наследственным долям.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 6,
+        "action": "Закрыть счёт после распределения остатка.",
+        "expertise_type": "legal_ownership_check",
+        "expected_output": "Распределение возможно только по наследственным долям.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "representative_authority_check",
+        "status": "confirmed",
+        "summary": "Заявитель вправе получить только половину доступного наследственного остатка.",
+        "evidence": [
+          "result_code=PARTIAL_AUTHORITY_CONFIRMED",
+          "source_case=HC-2026-0011"
+        ]
+      },
+      {
+        "expertise_type": "legal_ownership_check",
+        "status": "confirmed",
+        "summary": "Распределение возможно только по наследственным долям.",
+        "evidence": [
+          "result_code=MANUAL_LEGAL_REVIEW",
+          "source_case=HC-2026-0011"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Остаток, включая refund, распределён между двумя наследниками по 1/2; счёт закрыт.",
+      "resolved_at": "2026-07-08T09:55:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-017",
+    "client_id": "SYN-CL-1217",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Поддержка уязвимого клиента",
+    "created_at": "2026-07-02T09:05:00+03:00",
+    "priority": "high",
+    "case_description": "Пожилой клиент со сниженным слухом трижды звонил по спору о недовыданных 5 000 ₽. Каждый раз ему повторно задавали одни и те же вопросы, а обещанные письменные инструкции не отправлялись. ATM investigation уже подтвердил частичную выдачу, но кейс оставался открытым из-за потерянного handoff.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-02T09:05:00+03:00",
+        "text": "Завершить расследование по ATM и общаться только письменно крупным шрифтом."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-02T09:05:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Пожилой клиент со сниженным слухом трижды звонил по спору о недовыданных 5 000 ₽. Каждый раз ему повторно задавали одни и те же вопросы, а обещанные письменные инструкции не отправлялись. ATM investigation уже подтвердил частичную выдачу, но кейс оставался открытым из-за потерянного handoff."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-02T09:05:00+03:00",
+        "text": "Диагностический код синтетического кейса: CONFIRMED_PARTIAL_DISPENSE_AND_SERVICE_HANDOFF_FAILURE."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Вологодская область",
+      "relationship_years": 5.4,
+      "communication_language": "ru",
+      "vulnerability_flags": [
+        "hearing_impairment",
+        "senior_customer"
+      ]
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3017",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 31350.0,
+        "available_balance": 31350.0,
+        "linked_account_id": "SYN-ACC-4017"
+      },
+      {
+        "product_id": "SYN-ACC-4017",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 31350.0,
+        "available_balance": 31350.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CONFIRMED_PARTIAL_DISPENSE_AND_SERVICE_HANDOFF_FAILURE",
+      "source_topic": "vulnerable_customer",
+      "ledger_balance": 31350.0,
+      "available_balance": 31350.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-811072",
+          "type": "atm_withdrawal",
+          "atm_id": "ATM-OWN-3204",
+          "posted_at": "2026-06-21T14:41:00+03:00",
+          "amount": -20000.0,
+          "currency": "RUB",
+          "customer_received_amount": 15000.0,
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0012-A",
+          "type": "atm_journal",
+          "summary": "Одна купюра 5 000 ₽ была захвачена retract-модулем."
+        },
+        {
+          "evidence_id": "EV-0012-B",
+          "type": "contact_history",
+          "summary": "Три повторных звонка, accommodation flag не соблюдался."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-017"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Закрепить одного владельца кейса.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Подтверждена недовыдача 5 000 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Перевести коммуникацию в письменный формат крупным шрифтом.",
+        "expertise_type": "vulnerability_service_review",
+        "expected_output": "Нужно закрепить владельца кейса, сменить канал и компенсировать service failure.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Использовать уже готовый ATM result без повторного сбора фактов.",
+        "expertise_type": "vulnerability_service_review",
+        "expected_output": "Нужно закрепить владельца кейса, сменить канал и компенсировать service failure.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Выполнить mock-credit 5 000 ₽.",
+        "expertise_type": "vulnerability_service_review",
+        "expected_output": "Нужно закрепить владельца кейса, сменить канал и компенсировать service failure.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Добавить mock service compensation 1 000 ₽.",
+        "expertise_type": "vulnerability_service_review",
+        "expected_output": "Нужно закрепить владельца кейса, сменить канал и компенсировать service failure.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "atm_exception_investigation",
+        "status": "confirmed",
+        "summary": "Подтверждена недовыдача 5 000 ₽.",
+        "evidence": [
+          "result_code=PARTIAL_EXCEPTION_CONFIRMED",
+          "source_case=HC-2026-0012"
+        ]
+      },
+      {
+        "expertise_type": "vulnerability_service_review",
+        "status": "confirmed",
+        "summary": "Нужно закрепить владельца кейса, сменить канал и компенсировать service failure.",
+        "evidence": [
+          "result_code=SERVICE_RECOVERY_REQUIRED",
+          "source_case=HC-2026-0012"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Возвращено 5 000 ₽ и начислена компенсация 1 000 ₽; дальнейшая связь — письменно.",
+      "resolved_at": "2026-07-06T13:40:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-018",
+    "client_id": "SYN-CL-1218",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Удержание и возврат депозита",
+    "created_at": "2026-07-07T17:12:00+03:00",
+    "priority": "high",
+    "case_description": "На счёт был зачислен чек на 95 000 ₽ через мобильный депозит. Через два дня 70 000 ₽ стали доступны, и клиент потратил 61 500 ₽. Позже банк-эмитент чека вернул его как unpaid, после чего счёт ушёл в минус 31 500 ₽ и был ограничен.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-07T17:12:00+03:00",
+        "text": "Объяснить минус 31 500 ₽ и отменить ограничение счёта."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-07T17:12:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: На счёт был зачислен чек на 95 000 ₽ через мобильный депозит. Через два дня 70 000 ₽ стали доступны, и клиент потратил 61 500 ₽. Позже банк-эмитент чека вернул его как unpaid, после чего счёт ушёл в минус 31 500 ₽ и был ограничен."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-07T17:12:00+03:00",
+        "text": "Диагностический код синтетического кейса: RETURNED_DEPOSIT_AFTER_PARTIAL_AVAILABILITY."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Иркутская область",
+      "relationship_years": 6.1,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3018",
+        "product_type": "debit_card",
+        "status": "restricted",
+        "currency": "USD_SYNTHETIC",
+        "balance": -31500.0,
+        "available_balance": -31500.0,
+        "linked_account_id": "SYN-ACC-4018"
+      },
+      {
+        "product_id": "SYN-ACC-4018",
+        "product_type": "current_account",
+        "status": "restricted_negative",
+        "currency": "USD_SYNTHETIC",
+        "balance": -31500.0,
+        "available_balance": -31500.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "RETURNED_DEPOSIT_AFTER_PARTIAL_AVAILABILITY",
+      "source_topic": "deposit_hold",
+      "ledger_balance": -31500.0,
+      "available_balance": -31500.0,
+      "account_status": "restricted_negative",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-920001",
+          "type": "mobile_check_deposit",
+          "posted_at": "2026-06-28T10:05:00-04:00",
+          "amount": 95000.0,
+          "currency": "USD_SYNTHETIC",
+          "status": "reversed_returned_item"
+        },
+        {
+          "transaction_id": "TX-SYN-920002",
+          "type": "deposit_reversal",
+          "posted_at": "2026-07-05T09:13:00-04:00",
+          "amount": -95000.0,
+          "currency": "USD_SYNTHETIC",
+          "status": "posted",
+          "return_reason": "UNPAID_ITEM"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0013-A",
+          "type": "deposit_availability_notice",
+          "summary": "Часть депозита стала доступна до финального расчёта."
+        },
+        {
+          "evidence_id": "EV-0013-B",
+          "type": "returned_item_notice",
+          "summary": "Банк плательщика вернул чек как unpaid."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "NEGATIVE_BALANCE",
+        "RETURNED_DEPOSIT"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-018"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Разобрать lifecycle депозита и момент availability.",
+        "expertise_type": "deposit_hold_check",
+        "expected_output": "Зачисление отменено после возврата платёжного инструмента.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сопоставить reversal и последующие расходы.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Минус полностью объясняется spending после условной availability.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Не отменять корректный reversal.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Минус полностью объясняется spending после условной availability.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Согласовать mock repayment plan на отрицательный остаток.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Минус полностью объясняется spending после условной availability.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "После погашения снять restriction.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Минус полностью объясняется spending после условной availability.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "deposit_hold_check",
+        "status": "confirmed",
+        "summary": "Зачисление отменено после возврата платёжного инструмента.",
+        "evidence": [
+          "result_code=DEPOSIT_RETURNED",
+          "source_case=HC-2026-0013"
+        ]
+      },
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "Минус полностью объясняется spending после условной availability.",
+        "evidence": [
+          "result_code=TECHNICAL_OVERDRAFT_CONFIRMED",
+          "source_case=HC-2026-0013"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Клиент погасил отрицательный остаток по согласованному графику, restriction снят.",
+      "resolved_at": "2026-07-14T12:18:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-019",
+    "client_id": "SYN-CL-1219",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Санкционная проверка",
+    "created_at": "2026-07-10T11:48:00+03:00",
+    "priority": "critical",
+    "case_description": "Международный перевод 8 400 EUR был остановлен после совпадения имени получателя с записью санкционного списка. Дата рождения и гражданство не совпадали, но frontline видел только общий код SANCTIONS_REVIEW и не мог раскрыть детали.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-10T11:48:00+03:00",
+        "text": "Снять блокировку международного перевода на собственный счёт."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-10T11:48:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Международный перевод 8 400 EUR был остановлен после совпадения имени получателя с записью санкционного списка. Дата рождения и гражданство не совпадали, но frontline видел только общий код SANCTIONS_REVIEW и не мог раскрыть детали."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-10T11:48:00+03:00",
+        "text": "Диагностический код синтетического кейса: SANCTIONS_NAME_MATCH_FALSE_POSITIVE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Кировская область",
+      "relationship_years": 6.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3019",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "EUR",
+        "balance": 12140.0,
+        "available_balance": 12140.0,
+        "linked_account_id": "SYN-ACC-4019"
+      },
+      {
+        "product_id": "SYN-ACC-4019",
+        "product_type": "current_account",
+        "status": "restricted_transaction",
+        "currency": "EUR",
+        "balance": 12140.0,
+        "available_balance": 12140.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "SANCTIONS_NAME_MATCH_FALSE_POSITIVE",
+      "source_topic": "sanctions_review",
+      "ledger_balance": 12140.0,
+      "available_balance": 12140.0,
+      "account_status": "restricted_transaction",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-830700",
+          "type": "international_transfer",
+          "beneficiary": "SERGEI ORLOV",
+          "beneficiary_account": "SYN-IBAN-440190",
+          "created_at": "2026-07-10T09:21:00+03:00",
+          "amount": -8400.0,
+          "currency": "EUR",
+          "status": "held_for_sanctions_review"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0014-A",
+          "type": "beneficiary_bank_statement",
+          "summary": "Получатель — тот же клиент, счёт открыт в другом банке."
+        },
+        {
+          "evidence_id": "EV-0014-B",
+          "type": "identity_comparison",
+          "summary": "Дата рождения, гражданство и адрес не совпадают с list entry."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "SANCTIONS_REVIEW"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-019"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Не пытаться снять блокировку силами frontline.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Совпадение имени не подтверждается дополнительными идентификаторами.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Собрать идентификаторы получателя и подтверждение владения счётом.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Совпадение имени не подтверждается дополнительными идентификаторами.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Передать данные в sanctions review.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Совпадение имени не подтверждается дополнительными идентификаторами.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После решения выполнить mock-release transfer.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Совпадение имени не подтверждается дополнительными идентификаторами.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "aml_sanctions_review",
+        "status": "confirmed",
+        "summary": "Совпадение имени не подтверждается дополнительными идентификаторами.",
+        "evidence": [
+          "result_code=FALSE_POSITIVE",
+          "source_case=HC-2026-0014"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Перевод выпущен из hold и исполнен.",
+      "resolved_at": "2026-07-17T16:32:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-020",
+    "client_id": "SYN-CL-1220",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Дублирование карточной операции",
+    "created_at": "2026-05-06T10:24:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент оплатил кофемашину в магазине HomeCircuit. В приложении появились два окончательных списания по 9 460 ₽ с разными transaction ID и разницей в 47 секунд. Магазин подтвердил один заказ и одну отгрузку.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-06T10:24:00+03:00",
+        "text": "Вернуть второе списание 9 460 ₽ за один заказ бытовой техники."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-06T10:24:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент оплатил кофемашину в магазине HomeCircuit. В приложении появились два окончательных списания по 9 460 ₽ с разными transaction ID и разницей в 47 секунд. Магазин подтвердил один заказ и одну отгрузку."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-06T10:24:00+03:00",
+        "text": "Диагностический код синтетического кейса: MERCHANT_RETRY_CREATED_SECOND_SETTLEMENT."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Курская область",
+      "relationship_years": 7.5,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3020",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 18220.44,
+        "available_balance": 18220.44,
+        "linked_account_id": "SYN-ACC-4020"
+      },
+      {
+        "product_id": "SYN-ACC-4020",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 18220.44,
+        "available_balance": 18220.44
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_RETRY_CREATED_SECOND_SETTLEMENT",
+      "source_topic": "duplicate_transaction",
+      "ledger_balance": 18220.44,
+      "available_balance": 18220.44,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-450117",
+          "type": "card_purchase",
+          "merchant": "HOMECIRCUIT",
+          "mcc": "5732",
+          "authorization_at": "2026-05-04T16:18:03+03:00",
+          "posted_at": "2026-05-05T02:31:00+03:00",
+          "amount": -9460.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "HC-551804"
+        },
+        {
+          "transaction_id": "TX-SYN-450119",
+          "type": "card_purchase",
+          "merchant": "HOMECIRCUIT",
+          "mcc": "5732",
+          "authorization_at": "2026-05-04T16:18:50+03:00",
+          "posted_at": "2026-05-05T02:33:00+03:00",
+          "amount": -9460.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "HC-551804"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0015-A",
+          "type": "merchant_confirmation",
+          "summary": "Продавец подтвердил один заказ, одну отгрузку и отсутствие второго товара."
+        },
+        {
+          "evidence_id": "EV-0015-B",
+          "type": "customer_receipt",
+          "summary": "Чек сформирован один раз на 9 460 ₽."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-020"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Проверить, что обе операции являются posted, а не authorization и clearing одной покупки.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Обе записи окончательно списаны и влияют на баланс.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сопоставить order ID, чеки и факт поставки.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Вторая операция соответствует duplicate workflow.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Открыть mock-dispute по более позднему дебету.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Вторая операция соответствует duplicate workflow.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После подтверждения выполнить mock-credit 9 460 ₽.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Вторая операция соответствует duplicate workflow.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Обе записи окончательно списаны и влияют на баланс.",
+        "evidence": [
+          "result_code=POSTED_TRANSACTION",
+          "source_case=HC-2026-0015"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Вторая операция соответствует duplicate workflow.",
+        "evidence": [
+          "result_code=ELIGIBLE_FOR_DISPUTE",
+          "source_case=HC-2026-0015"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Второе списание 9 460 ₽ возмещено.",
+      "resolved_at": "2026-05-13T17:08:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-021",
+    "client_id": "SYN-CL-1221",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Внесение наличных",
+    "created_at": "2026-05-18T13:37:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент внёс 45 000 ₽ через банкомат в офисе. Устройство приняло девять купюр по 5 000 ₽, но после технической паузы показало и зачислило 40 000 ₽. При инкассации обнаружен излишек 5 000 ₽.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-18T13:37:00+03:00",
+        "text": "Зачислить недостающие 5 000 ₽ после внесения наличных."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-18T13:37:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент внёс 45 000 ₽ через банкомат в офисе. Устройство приняло девять купюр по 5 000 ₽, но после технической паузы показало и зачислило 40 000 ₽. При инкассации обнаружен излишек 5 000 ₽."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-18T13:37:00+03:00",
+        "text": "Диагностический код синтетического кейса: CASH_ACCEPTOR_TIMEOUT_AFTER_BANKNOTE_CAPTURE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Липецкая область",
+      "relationship_years": 8.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3021",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 67350.0,
+        "available_balance": 67350.0,
+        "linked_account_id": "SYN-ACC-4021"
+      },
+      {
+        "product_id": "SYN-ACC-4021",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 67350.0,
+        "available_balance": 67350.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CASH_ACCEPTOR_TIMEOUT_AFTER_BANKNOTE_CAPTURE",
+      "source_topic": "cash_deposit_exception",
+      "ledger_balance": 67350.0,
+      "available_balance": 67350.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-661204",
+          "type": "cash_deposit",
+          "atm_id": "ATM-OWN-2048",
+          "location": "Офис на улице Лесной",
+          "created_at": "2026-05-18T09:42:00+03:00",
+          "customer_claimed_amount": 45000.0,
+          "machine_recognized_amount": 40000.0,
+          "posted_amount": 40000.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0016-A",
+          "type": "atm_receipt",
+          "summary": "Чек отражает зачисление 40 000 ₽."
+        },
+        {
+          "evidence_id": "EV-0016-B",
+          "type": "cash_reconciliation",
+          "summary": "Инкассация выявила излишек одной купюры 5 000 ₽."
+        },
+        {
+          "evidence_id": "EV-0016-C",
+          "type": "cash_acceptor_log",
+          "summary": "После девятой купюры зарегистрирован sensor timeout."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-021"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Зафиксировать заявленную и фактически зачисленную сумму.",
+        "expertise_type": "cash_deposit_reconciliation",
+        "expected_output": "Излишек 5 000 ₽ однозначно сопоставлен с операцией клиента.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Дождаться инкассации и сверить cash-acceptor log.",
+        "expertise_type": "cash_deposit_reconciliation",
+        "expected_output": "Излишек 5 000 ₽ однозначно сопоставлен с операцией клиента.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Сопоставить излишек с заявлением клиента.",
+        "expertise_type": "cash_deposit_reconciliation",
+        "expected_output": "Излишек 5 000 ₽ однозначно сопоставлен с операцией клиента.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Выполнить mock-credit недостающих 5 000 ₽.",
+        "expertise_type": "cash_deposit_reconciliation",
+        "expected_output": "Излишек 5 000 ₽ однозначно сопоставлен с операцией клиента.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "cash_deposit_reconciliation",
+        "status": "confirmed",
+        "summary": "Излишек 5 000 ₽ однозначно сопоставлен с операцией клиента.",
+        "evidence": [
+          "result_code=CASH_SURPLUS_MATCHED",
+          "source_case=HC-2026-0016"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Недостающие 5 000 ₽ зачислены на счёт.",
+      "resolved_at": "2026-05-19T11:26:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-022",
+    "client_id": "SYN-CL-1222",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неавторизованная операция",
+    "created_at": "2026-05-22T08:55:00+03:00",
+    "priority": "critical",
+    "case_description": "За двое суток по карте прошли три покупки у электроники и доставки еды. Физическая карта была у клиента. Все операции выполнены токеном, созданным после звонка мошенника, представившегося службой доставки; клиент сообщил одноразовый код, не понимая, что подтверждает добавление карты в чужой кошелёк.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-22T08:55:00+03:00",
+        "text": "Остановить операции неизвестного мобильного кошелька и вернуть 27 380 ₽."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-22T08:55:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: За двое суток по карте прошли три покупки у электроники и доставки еды. Физическая карта была у клиента. Все операции выполнены токеном, созданным после звонка мошенника, представившегося службой доставки; клиент сообщил одноразовый код, не понимая, что подтверждает добавление карты в чужой кошелёк."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-22T08:55:00+03:00",
+        "text": "Диагностический код синтетического кейса: SOCIAL_ENGINEERING_TOKEN_PROVISIONING."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Мурманская область",
+      "relationship_years": 1.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3022",
+        "product_type": "debit_card",
+        "status": "blocked_replaced",
+        "currency": "RUB",
+        "balance": 11640.82,
+        "available_balance": 11640.82,
+        "linked_account_id": "SYN-ACC-4022"
+      },
+      {
+        "product_id": "SYN-ACC-4022",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 11640.82,
+        "available_balance": 11640.82
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "SOCIAL_ENGINEERING_TOKEN_PROVISIONING",
+      "source_topic": "unauthorized_card_transaction",
+      "ledger_balance": 11640.82,
+      "available_balance": 11640.82,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-702811",
+          "type": "card_purchase",
+          "merchant": "TECHBAY ONLINE",
+          "channel": "mobile_wallet_ecommerce",
+          "posted_at": "2026-05-20T22:17:00+03:00",
+          "amount": -18490.0,
+          "currency": "RUB",
+          "status": "posted",
+          "authentication_method": "token_cryptogram"
+        },
+        {
+          "transaction_id": "TX-SYN-702933",
+          "type": "card_purchase",
+          "merchant": "QUICKPLATE",
+          "channel": "mobile_wallet_in_app",
+          "posted_at": "2026-05-21T01:08:00+03:00",
+          "amount": -2390.0,
+          "currency": "RUB",
+          "status": "posted",
+          "authentication_method": "token_cryptogram"
+        },
+        {
+          "transaction_id": "TX-SYN-703104",
+          "type": "card_purchase",
+          "merchant": "GADGET PORT",
+          "channel": "mobile_wallet_pos",
+          "posted_at": "2026-05-21T13:41:00+03:00",
+          "amount": -6500.0,
+          "currency": "RUB",
+          "status": "posted",
+          "authentication_method": "token_cryptogram"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0017-A",
+          "type": "token_provisioning_log",
+          "summary": "Токен создан на ранее неизвестном Android-устройстве с нового IP."
+        },
+        {
+          "evidence_id": "EV-0017-B",
+          "type": "customer_call_statement",
+          "summary": "Клиент признал передачу одноразового кода после социальной инженерии, но не намеревался добавлять карту в кошелёк."
+        },
+        {
+          "evidence_id": "EV-0017-C",
+          "type": "device_history",
+          "summary": "Ни одно прежнее устройство клиента не совпадает с устройством токена."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-022"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Немедленно удалить токен и заблокировать карту.",
+        "expertise_type": "card_fraud_review",
+        "expected_output": "Совокупность данных указывает на неправомерное provisioning токена.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Собрать provisioning, device и IP данные.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Кейс направлен в unauthorized workflow с ручной оценкой ответственности.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Квалифицировать три операции как единый fraud episode.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Кейс направлен в unauthorized workflow с ручной оценкой ответственности.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После human approval выполнить mock-credit общей суммы.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Кейс направлен в unauthorized workflow с ручной оценкой ответственности.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Зафиксировать replacement card и предупреждение о social engineering.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Кейс направлен в unauthorized workflow с ручной оценкой ответственности.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_fraud_review",
+        "status": "confirmed",
+        "summary": "Совокупность данных указывает на неправомерное provisioning токена.",
+        "evidence": [
+          "result_code=TOKEN_COMPROMISE_SUSPECTED",
+          "source_case=HC-2026-0017"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Кейс направлен в unauthorized workflow с ручной оценкой ответственности.",
+        "evidence": [
+          "result_code=UNAUTHORIZED_CLAIM_PATH",
+          "source_case=HC-2026-0017"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Три операции на 27 380 ₽ возмещены; токен удалён, карта заменена.",
+      "resolved_at": "2026-05-24T14:12:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-023",
+    "client_id": "SYN-CL-1223",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Спор с торговой точкой",
+    "created_at": "2026-06-02T11:16:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент оплатил 36 750 ₽ за комплект из шести садовых кресел и стола. Продавец доставил стол и четыре кресла, но два кресла стоимостью 8 400 ₽ по детализации заказа не поставил. После трёх обещаний довезти товар магазин перестал отвечать.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-02T11:16:00+03:00",
+        "text": "Вернуть стоимость недоставленной части заказа."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-02T11:16:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент оплатил 36 750 ₽ за комплект из шести садовых кресел и стола. Продавец доставил стол и четыре кресла, но два кресла стоимостью 8 400 ₽ по детализации заказа не поставил. После трёх обещаний довезти товар магазин перестал отвечать."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-02T11:16:00+03:00",
+        "text": "Диагностический код синтетического кейса: MERCHANT_PARTIAL_NON_DELIVERY."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Орловская область",
+      "relationship_years": 1.9,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3023",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 55288.31,
+        "available_balance": 55288.31,
+        "linked_account_id": "SYN-ACC-4023"
+      },
+      {
+        "product_id": "SYN-ACC-4023",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 55288.31,
+        "available_balance": 55288.31
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_PARTIAL_NON_DELIVERY",
+      "source_topic": "merchant_dispute",
+      "ledger_balance": 55288.31,
+      "available_balance": 55288.31,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-819550",
+          "type": "card_purchase",
+          "merchant": "GARDENLOFT STORE",
+          "mcc": "5712",
+          "authorization_at": "2026-04-19T12:05:00+03:00",
+          "posted_at": "2026-04-20T04:33:00+03:00",
+          "amount": -36750.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0018-A",
+          "type": "itemized_order",
+          "summary": "Два кресла выделены отдельной строкой общей стоимостью 8 400 ₽."
+        },
+        {
+          "evidence_id": "EV-0018-B",
+          "type": "delivery_note",
+          "summary": "В накладной отмечены стол и четыре кресла."
+        },
+        {
+          "evidence_id": "EV-0018-C",
+          "type": "merchant_correspondence",
+          "summary": "Продавец трижды обещал довезти два кресла, затем перестал отвечать."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-023"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Проверить состав заказа и фактически доставленные позиции.",
+        "expertise_type": "merchant_fulfillment_check",
+        "expected_output": "Подтверждена недоставка двух кресел стоимостью 8 400 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Определить доказанную стоимость недоставленной части.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Поддерживается только частичное возмещение 8 400 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Убедиться в попытках урегулирования с продавцом.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Поддерживается только частичное возмещение 8 400 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Открыть mock-dispute только на 8 400 ₽.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Поддерживается только частичное возмещение 8 400 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Выполнить mock-credit после положительного решения.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Поддерживается только частичное возмещение 8 400 ₽.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "merchant_fulfillment_check",
+        "status": "confirmed",
+        "summary": "Подтверждена недоставка двух кресел стоимостью 8 400 ₽.",
+        "evidence": [
+          "result_code=PARTIAL_DELIVERY_CONFIRMED",
+          "source_case=HC-2026-0018"
+        ]
+      },
+      {
+        "expertise_type": "dispute_evidence_assessment",
+        "status": "confirmed",
+        "summary": "Поддерживается только частичное возмещение 8 400 ₽.",
+        "evidence": [
+          "result_code=PARTIAL_REMEDY_SUPPORTED",
+          "source_case=HC-2026-0018"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Возмещено 8 400 ₽ за две недоставленные позиции.",
+      "resolved_at": "2026-06-10T16:04:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-024",
+    "client_id": "SYN-CL-1224",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неуспешный реверс",
+    "created_at": "2026-06-14T18:09:00+03:00",
+    "priority": "high",
+    "case_description": "На автоматической АЗС сначала появился hold 6 000 ₽. Фактическая заправка на 2 740 ₽ была posted на следующий день, но исходный hold сохранился ещё семь дней. Merchant передал reversal, однако в карточном процессинге он остался в ошибочном статусе.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-14T18:09:00+03:00",
+        "text": "Освободить 6 000 ₽, которые продолжают блокироваться после оплаты топлива."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-14T18:09:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: На автоматической АЗС сначала появился hold 6 000 ₽. Фактическая заправка на 2 740 ₽ была posted на следующий день, но исходный hold сохранился ещё семь дней. Merchant передал reversal, однако в карточном процессинге он остался в ошибочном статусе."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-14T18:09:00+03:00",
+        "text": "Диагностический код синтетического кейса: REVERSAL_PROCESSING_ERROR_AFTER_PARTIAL_CAPTURE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Пензенская область",
+      "relationship_years": 2.6,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3024",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 9340.77,
+        "available_balance": 3340.77,
+        "linked_account_id": "SYN-ACC-4024"
+      },
+      {
+        "product_id": "SYN-ACC-4024",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 9340.77,
+        "available_balance": 3340.77
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "REVERSAL_PROCESSING_ERROR_AFTER_PARTIAL_CAPTURE",
+      "source_topic": "failed_reversal",
+      "ledger_balance": 9340.77,
+      "available_balance": 3340.77,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-930441",
+          "type": "card_authorization",
+          "merchant": "NORTHFUEL AUTO",
+          "mcc": "5542",
+          "authorization_at": "2026-06-06T07:28:00+03:00",
+          "amount": -6000.0,
+          "currency": "RUB",
+          "status": "pending",
+          "reversal_status": "received_processing_error"
+        },
+        {
+          "transaction_id": "TX-SYN-930982",
+          "type": "card_purchase",
+          "merchant": "NORTHFUEL AUTO",
+          "mcc": "5542",
+          "posted_at": "2026-06-07T03:14:00+03:00",
+          "amount": -2740.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_authorization_id": "TX-SYN-930441"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0019-A",
+          "type": "fuel_receipt",
+          "summary": "Итоговая сумма топлива 2 740 ₽."
+        },
+        {
+          "evidence_id": "EV-0019-B",
+          "type": "reversal_message",
+          "summary": "Merchant отправил reversal на 6 000 ₽ в день заправки."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "STALE_CARD_HOLD"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-024"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Связать предавторизацию и итоговый дебет.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Финальный presentment получен, а reversal подтверждён; stale hold можно снять.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить наличие reversal и отсутствие второго presentment.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Разница current и available balance полностью равна 6 000 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Запросить hold review.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Разница current и available balance полностью равна 6 000 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Выполнить mock-release stale hold.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Разница current и available balance полностью равна 6 000 ₽.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Повторно сверить available balance.",
+        "expertise_type": "account_balance_analysis",
+        "expected_output": "Разница current и available balance полностью равна 6 000 ₽.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Финальный presentment получен, а reversal подтверждён; stale hold можно снять.",
+        "evidence": [
+          "result_code=RELEASE_ALLOWED",
+          "source_case=HC-2026-0019"
+        ]
+      },
+      {
+        "expertise_type": "account_balance_analysis",
+        "status": "confirmed",
+        "summary": "Разница current и available balance полностью равна 6 000 ₽.",
+        "evidence": [
+          "result_code=HOLD_IS_SOLE_DIFFERENCE",
+          "source_case=HC-2026-0019"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Hold 6 000 ₽ снят; доступный баланс сравнялся с текущим.",
+      "resolved_at": "2026-06-15T12:38:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-025",
+    "client_id": "SYN-CL-1225",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Возврат по карточной операции",
+    "created_at": "2026-06-30T14:20:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент отменил один из двух заказов у одного маркетплейса на одинаковую сумму 7 850 ₽. В выписке появился один refund, но система автоматически связала его с более поздней покупкой, а отменённый заказ продолжал отображаться без возврата.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-30T14:20:00+03:00",
+        "text": "Найти возврат 7 850 ₽ за отменённый заказ."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-30T14:20:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент отменил один из двух заказов у одного маркетплейса на одинаковую сумму 7 850 ₽. В выписке появился один refund, но система автоматически связала его с более поздней покупкой, а отменённый заказ продолжал отображаться без возврата."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-30T14:20:00+03:00",
+        "text": "Диагностический код синтетического кейса: REFUND_MATCHED_BY_AMOUNT_INSTEAD_OF_REFERENCE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Псковская область",
+      "relationship_years": 3.3,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3025",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 40712.63,
+        "available_balance": 40712.63,
+        "linked_account_id": "SYN-ACC-4025"
+      },
+      {
+        "product_id": "SYN-ACC-4025",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 40712.63,
+        "available_balance": 40712.63
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "REFUND_MATCHED_BY_AMOUNT_INSTEAD_OF_REFERENCE",
+      "source_topic": "refund_not_received",
+      "ledger_balance": 40712.63,
+      "available_balance": 40712.63,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-620300",
+          "type": "card_purchase",
+          "merchant": "MARKETDOCK",
+          "posted_at": "2026-06-11T03:15:00+03:00",
+          "amount": -7850.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "MD-77401"
+        },
+        {
+          "transaction_id": "TX-SYN-620901",
+          "type": "card_purchase",
+          "merchant": "MARKETDOCK",
+          "posted_at": "2026-06-14T03:22:00+03:00",
+          "amount": -7850.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "MD-78190"
+        },
+        {
+          "transaction_id": "TX-SYN-624118",
+          "type": "refund",
+          "merchant": "MARKETDOCK",
+          "posted_at": "2026-06-27T06:08:00+03:00",
+          "amount": 7850.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_transaction_id": "TX-SYN-620901",
+          "merchant_reference": "RF-MD-77401"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0021-A",
+          "type": "merchant_refund_confirmation",
+          "summary": "Reference RF-MD-77401 относится к первому, отменённому заказу MD-77401."
+        },
+        {
+          "evidence_id": "EV-0021-B",
+          "type": "order_history",
+          "summary": "Второй заказ MD-78190 доставлен и не отменялся."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-025"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сопоставить обе покупки и refund по merchant references.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Refund найден, но ошибочно связан со второй покупкой той же суммы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Подтвердить, что деньги уже зачислены на счёт.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Кредит 7 850 ₽ уже окончательно отражён по счёту.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Исправить mock-link refund на отменённый заказ.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Кредит 7 850 ₽ уже окончательно отражён по счёту.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Закрыть кейс без повторного credit и объяснить сотруднику причину отображения.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Кредит 7 850 ₽ уже окончательно отражён по счёту.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "refund_trace_check",
+        "status": "confirmed",
+        "summary": "Refund найден, но ошибочно связан со второй покупкой той же суммы.",
+        "evidence": [
+          "result_code=REFUND_MATCHED_TO_OTHER_TRANSACTION",
+          "source_case=HC-2026-0021"
+        ]
+      },
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Кредит 7 850 ₽ уже окончательно отражён по счёту.",
+        "evidence": [
+          "result_code=REFUND_POSTED",
+          "source_case=HC-2026-0021"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Refund 7 850 ₽ привязан к правильному заказу; дополнительное зачисление не выполнено.",
+      "resolved_at": "2026-07-02T10:44:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-026",
+    "client_id": "SYN-CL-1226",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Операция в банкомате",
+    "created_at": "2026-04-17T10:22:00+03:00",
+    "priority": "normal",
+    "case_description": "Клиент сообщил, что банкомат собственного банка списал 20 000 ₽, но якобы не выдал деньги. Устройство находилось в круглосуточной зоне офиса. ATM journal зафиксировал успешную выдачу 10 купюр по 2 000 ₽, retract не было, а кассовая сверка не выявила излишка.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-04-17T10:22:00+03:00",
+        "text": "Вернуть 20 000 ₽ по заявлению о невыдаче наличных."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-04-17T10:22:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент сообщил, что банкомат собственного банка списал 20 000 ₽, но якобы не выдал деньги. Устройство находилось в круглосуточной зоне офиса. ATM journal зафиксировал успешную выдачу 10 купюр по 2 000 ₽, retract не было, а кассовая сверка не выявила излишка."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-04-17T10:22:00+03:00",
+        "text": "Диагностический код синтетического кейса: CUSTOMER_RECALL_INCONSISTENT_WITH_DEVICE_EVIDENCE."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Саратовская область",
+      "relationship_years": 4.0,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3026",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 15430.62,
+        "available_balance": 15430.62,
+        "linked_account_id": "SYN-ACC-4026"
+      },
+      {
+        "product_id": "SYN-ACC-4026",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 15430.62,
+        "available_balance": 15430.62
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CUSTOMER_RECALL_INCONSISTENT_WITH_DEVICE_EVIDENCE",
+      "source_topic": "atm_exception",
+      "ledger_balance": 15430.62,
+      "available_balance": 15430.62,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-701422",
+          "type": "atm_withdrawal",
+          "atm_id": "ATM-OWN-2077",
+          "location": "Офис на улице Лесной",
+          "authorization_at": "2026-04-16T23:41:00+03:00",
+          "posted_at": "2026-04-17T02:12:00+03:00",
+          "amount": -20000.0,
+          "currency": "RUB",
+          "status": "posted",
+          "network_response_code": "00"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0022-A",
+          "type": "atm_journal",
+          "summary": "Зафиксированы открытие shutter, выдача 10 купюр и отсутствие retract."
+        },
+        {
+          "evidence_id": "EV-0022-B",
+          "type": "cash_reconciliation",
+          "summary": "Излишек и расхождение по кассетам отсутствуют."
+        },
+        {
+          "evidence_id": "EV-0022-C",
+          "type": "cctv_review_note",
+          "summary": "На записи виден клиент, забирающий банкноты из окна выдачи; изображение не используется для автоматического решения."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-026"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сверить debit с ATM ID и точным временем.",
+        "expertise_type": "atm_exception_investigation",
+        "expected_output": "Устройство подтвердило выдачу всей суммы, кассового излишка нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Получить ATM journal и результат кассовой сверки.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Техническая совокупность доказательств достаточна для отказа в корректировке.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Передать противоречивый кейс на ручной review доказательств.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Техническая совокупность доказательств достаточна для отказа в корректировке.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Закрыть без mock-credit и зафиксировать мотивированный вывод.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Техническая совокупность доказательств достаточна для отказа в корректировке.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "atm_exception_investigation",
+        "status": "confirmed",
+        "summary": "Устройство подтвердило выдачу всей суммы, кассового излишка нет.",
+        "evidence": [
+          "result_code=NO_EXCEPTION_FOUND",
+          "source_case=HC-2026-0022"
+        ]
+      },
+      {
+        "expertise_type": "dispute_evidence_assessment",
+        "status": "confirmed",
+        "summary": "Техническая совокупность доказательств достаточна для отказа в корректировке.",
+        "evidence": [
+          "result_code=MERCHANT_EVIDENCE_SUFFICIENT",
+          "source_case=HC-2026-0022"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Финансовая корректировка не выполнена.",
+      "resolved_at": "2026-04-24T13:06:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-027",
+    "client_id": "SYN-CL-1227",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Возврат по карточной операции",
+    "created_at": "2026-05-02T16:14:00+03:00",
+    "priority": "normal",
+    "case_description": "Авиакомпания SkyBridge прислала подтверждение возврата 23 490 ₽. Через два дня клиент не увидел деньги в доступном балансе. В карточной цепочке был найден incoming refund со статусом pending и корректным merchant reference; dispute ещё не требовался.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-02T16:14:00+03:00",
+        "text": "Проверить обещанный возврат 23 490 ₽ за отменённый авиабилет."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-02T16:14:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Авиакомпания SkyBridge прислала подтверждение возврата 23 490 ₽. Через два дня клиент не увидел деньги в доступном балансе. В карточной цепочке был найден incoming refund со статусом pending и корректным merchant reference; dispute ещё не требовался."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-02T16:14:00+03:00",
+        "text": "Диагностический код синтетического кейса: CUSTOMER_CONTACT_BEFORE_REFUND_POSTING_COMPLETED."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Смоленская область",
+      "relationship_years": 4.7,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3027",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 50710.18,
+        "available_balance": 50710.18,
+        "linked_account_id": "SYN-ACC-4027"
+      },
+      {
+        "product_id": "SYN-ACC-4027",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 50710.18,
+        "available_balance": 50710.18
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CUSTOMER_CONTACT_BEFORE_REFUND_POSTING_COMPLETED",
+      "source_topic": "refund_not_received",
+      "ledger_balance": 50710.18,
+      "available_balance": 50710.18,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-730015",
+          "type": "card_purchase",
+          "merchant": "SKYBRIDGE AIR",
+          "posted_at": "2026-04-12T04:18:00+03:00",
+          "amount": -23490.0,
+          "currency": "RUB",
+          "status": "posted"
+        },
+        {
+          "transaction_id": "TX-SYN-739881",
+          "type": "refund",
+          "merchant": "SKYBRIDGE AIR",
+          "created_at": "2026-05-01T18:06:00+03:00",
+          "amount": 23490.0,
+          "currency": "RUB",
+          "status": "pending",
+          "linked_transaction_id": "TX-SYN-730015",
+          "merchant_reference": "SB-RF-88021"
+        },
+        {
+          "transaction_id": "TX-SYN-739881P",
+          "type": "refund",
+          "merchant": "SKYBRIDGE AIR",
+          "posted_at": "2026-05-05T05:47:00+03:00",
+          "amount": 23490.0,
+          "currency": "RUB",
+          "status": "posted",
+          "linked_transaction_id": "TX-SYN-730015",
+          "merchant_reference": "SB-RF-88021"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0023-A",
+          "type": "merchant_refund_confirmation",
+          "summary": "Возврат инициирован 1 мая, reference SB-RF-88021."
+        },
+        {
+          "evidence_id": "EV-0023-B",
+          "type": "processing_trace",
+          "summary": "Incoming refund найден в обработке и соответствует исходной покупке."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-027"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сопоставить merchant confirmation и incoming refund.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Полный refund найден в обработке, повторный спор преждевременен.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Не открывать dispute до завершения posting.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Сначала требуется дождаться результата найденной refund trace.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Установить контрольную повторную проверку статуса.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Сначала требуется дождаться результата найденной refund trace.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "После posting подтвердить зачисление сотруднику и закрыть кейс.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Сначала требуется дождаться результата найденной refund trace.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "refund_trace_check",
+        "status": "confirmed",
+        "summary": "Полный refund найден в обработке, повторный спор преждевременен.",
+        "evidence": [
+          "result_code=REFUND_PENDING",
+          "source_case=HC-2026-0023"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Сначала требуется дождаться результата найденной refund trace.",
+        "evidence": [
+          "result_code=REFUND_TRACE_FIRST",
+          "source_case=HC-2026-0023"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "23 490 ₽ зачислены естественным posting без дополнительного mock-credit.",
+      "resolved_at": "2026-05-08T11:33:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-028",
+    "client_id": "SYN-CL-1228",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Неавторизованная операция",
+    "created_at": "2026-05-13T08:44:00+03:00",
+    "priority": "high",
+    "case_description": "Клиент оспорил оплату CLOUDSTORE*PHOTO на 8 990 ₽ как мошенническую. Проверка показала 3DS-подтверждение с его обычного iPhone и IP домашней сети. Затем клиент вспомнил, что оформил годовую подписку через приложение, ожидая помесячное списание.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-13T08:44:00+03:00",
+        "text": "Вернуть 8 990 ₽ за покупку, которую клиент сначала не узнал."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-13T08:44:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Клиент оспорил оплату CLOUDSTORE*PHOTO на 8 990 ₽ как мошенническую. Проверка показала 3DS-подтверждение с его обычного iPhone и IP домашней сети. Затем клиент вспомнил, что оформил годовую подписку через приложение, ожидая помесячное списание."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-13T08:44:00+03:00",
+        "text": "Диагностический код синтетического кейса: CUSTOMER_MISUNDERSTOOD_ANNUAL_SUBSCRIPTION_PRICE."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Томская область",
+      "relationship_years": 5.4,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3028",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 62334.07,
+        "available_balance": 62334.07,
+        "linked_account_id": "SYN-ACC-4028"
+      },
+      {
+        "product_id": "SYN-ACC-4028",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 62334.07,
+        "available_balance": 62334.07
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CUSTOMER_MISUNDERSTOOD_ANNUAL_SUBSCRIPTION_PRICE",
+      "source_topic": "unauthorized_card_transaction",
+      "ledger_balance": 62334.07,
+      "available_balance": 62334.07,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-755100",
+          "type": "card_purchase",
+          "merchant": "CLOUDSTORE*PHOTO",
+          "channel": "ecommerce_3ds",
+          "authorization_at": "2026-05-12T20:09:00+03:00",
+          "posted_at": "2026-05-13T03:28:00+03:00",
+          "amount": -8990.0,
+          "currency": "RUB",
+          "status": "posted",
+          "authentication_method": "3ds_app_approval"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0024-A",
+          "type": "authentication_record",
+          "summary": "Операция подтверждена в банковском приложении на давно зарегистрированном устройстве."
+        },
+        {
+          "evidence_id": "EV-0024-B",
+          "type": "merchant_terms",
+          "summary": "На экране оплаты указана годовая стоимость 8 990 ₽."
+        },
+        {
+          "evidence_id": "EV-0024-C",
+          "type": "customer_follow_up",
+          "summary": "Клиент признал оформление подписки, но неправильно понял период списания."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-028"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Временно ограничить новые online-операции до первичной fraud-проверки.",
+        "expertise_type": "card_fraud_review",
+        "expected_output": "Операция подтверждена известным фактором клиента; fraud-path не поддержан.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сверить устройство, IP и способ подтверждения.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для неавторизованного dispute нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Проверить условия подписки и уточнить показания клиента.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для неавторизованного dispute нет.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Снять временное ограничение и закрыть кейс без возмещения.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Оснований для неавторизованного dispute нет.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_fraud_review",
+        "status": "confirmed",
+        "summary": "Операция подтверждена известным фактором клиента; fraud-path не поддержан.",
+        "evidence": [
+          "result_code=CUSTOMER_AUTHENTICATION_CONFIRMED",
+          "source_case=HC-2026-0024"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Оснований для неавторизованного dispute нет.",
+        "evidence": [
+          "result_code=INFORMATIONAL_ONLY",
+          "source_case=HC-2026-0024"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Возмещение не выполнено; карта оставлена активной.",
+      "resolved_at": "2026-05-14T17:20:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-029",
+    "client_id": "SYN-CL-1229",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Регулярный платёж",
+    "created_at": "2026-05-25T12:02:00+03:00",
+    "priority": "normal",
+    "case_description": "Годовая подписка FITZONE ONLINE продлилась 22 мая. Клиент отключил автопродление 23 мая и считал, что отмена должна аннулировать уже проведённое списание. Merchant подтвердил активное соглашение на момент renewal и прекращение будущих продлений.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-05-25T12:02:00+03:00",
+        "text": "Вернуть 4 590 ₽ и остановить будущие списания фитнес-сервиса."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-05-25T12:02:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Годовая подписка FITZONE ONLINE продлилась 22 мая. Клиент отключил автопродление 23 мая и считал, что отмена должна аннулировать уже проведённое списание. Merchant подтвердил активное соглашение на момент renewal и прекращение будущих продлений."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-05-25T12:02:00+03:00",
+        "text": "Диагностический код синтетического кейса: CANCELLATION_SUBMITTED_AFTER_VALID_RENEWAL."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Ульяновская область",
+      "relationship_years": 6.1,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3029",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 28905.54,
+        "available_balance": 28905.54,
+        "linked_account_id": "SYN-ACC-4029"
+      },
+      {
+        "product_id": "SYN-ACC-4029",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 28905.54,
+        "available_balance": 28905.54
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CANCELLATION_SUBMITTED_AFTER_VALID_RENEWAL",
+      "source_topic": "recurring_payment",
+      "ledger_balance": 28905.54,
+      "available_balance": 28905.54,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-780211",
+          "type": "recurring_card_payment",
+          "merchant": "FITZONE ONLINE",
+          "posted_at": "2026-05-22T06:11:00+03:00",
+          "amount": -4590.0,
+          "currency": "RUB",
+          "status": "posted",
+          "recurring_indicator": true
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0025-A",
+          "type": "merchant_subscription_record",
+          "summary": "Автопродление было активно до 23 мая."
+        },
+        {
+          "evidence_id": "EV-0025-B",
+          "type": "cancellation_confirmation",
+          "summary": "Будущие продления отменены 23 мая в 09:17."
+        },
+        {
+          "evidence_id": "EV-0025-C",
+          "type": "subscription_terms",
+          "summary": "Отмена действует на следующий расчётный период и не отменяет уже начавшийся."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-029"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Определить rail регулярного платежа.",
+        "expertise_type": "recurring_payment_check",
+        "expected_output": "Списание выполнено в период действия соглашения.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Сопоставить время renewal и отмены.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Спор по уже проведённой операции не поддержан; доступен контроль будущих списаний.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Подтвердить прекращение будущего соглашения у merchant.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Спор по уже проведённой операции не поддержан; доступен контроль будущих списаний.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Установить mock-block будущих card-on-file списаний по просьбе клиента.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Спор по уже проведённой операции не поддержан; доступен контроль будущих списаний.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 5,
+        "action": "Закрыть уже posted debit без возврата.",
+        "expertise_type": "dispute_qualification_check",
+        "expected_output": "Спор по уже проведённой операции не поддержан; доступен контроль будущих списаний.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "recurring_payment_check",
+        "status": "confirmed",
+        "summary": "Списание выполнено в период действия соглашения.",
+        "evidence": [
+          "result_code=MERCHANT_AGREEMENT_ACTIVE",
+          "source_case=HC-2026-0025"
+        ]
+      },
+      {
+        "expertise_type": "dispute_qualification_check",
+        "status": "confirmed",
+        "summary": "Спор по уже проведённой операции не поддержан; доступен контроль будущих списаний.",
+        "evidence": [
+          "result_code=INFORMATIONAL_ONLY",
+          "source_case=HC-2026-0025"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Списание 4 590 ₽ оставлено в силе; будущие платежи FITZONE ONLINE заблокированы.",
+      "resolved_at": "2026-05-27T16:38:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-030",
+    "client_id": "SYN-CL-1230",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Дублирование карточной операции",
+    "created_at": "2026-06-03T14:47:00+03:00",
+    "priority": "normal",
+    "case_description": "В выписке появились два дебета TECHPORT по 18 400 ₽ и 7 600 ₽ в разные дни. Клиент ожидал одно списание 26 000 ₽ и считал меньшую операцию повторной. Merchant представил заказ, разделённый на две отгрузки: монитор и док-станцию.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-03T14:47:00+03:00",
+        "text": "Вернуть одно из двух списаний магазина электроники."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-03T14:47:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: В выписке появились два дебета TECHPORT по 18 400 ₽ и 7 600 ₽ в разные дни. Клиент ожидал одно списание 26 000 ₽ и считал меньшую операцию повторной. Merchant представил заказ, разделённый на две отгрузки: монитор и док-станцию."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-03T14:47:00+03:00",
+        "text": "Диагностический код синтетического кейса: SPLIT_SHIPMENT_CREATED_MULTIPLE_VALID_PRESENTMENTS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass",
+      "region": "Архангельская область",
+      "relationship_years": 6.8,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3030",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 74218.2,
+        "available_balance": 74218.2,
+        "linked_account_id": "SYN-ACC-4030"
+      },
+      {
+        "product_id": "SYN-ACC-4030",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 74218.2,
+        "available_balance": 74218.2
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "SPLIT_SHIPMENT_CREATED_MULTIPLE_VALID_PRESENTMENTS",
+      "source_topic": "duplicate_transaction",
+      "ledger_balance": 74218.2,
+      "available_balance": 74218.2,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-801144",
+          "type": "card_purchase",
+          "merchant": "TECHPORT",
+          "posted_at": "2026-05-28T03:44:00+03:00",
+          "amount": -18400.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "TP-55102-A"
+        },
+        {
+          "transaction_id": "TX-SYN-803921",
+          "type": "card_purchase",
+          "merchant": "TECHPORT",
+          "posted_at": "2026-06-01T04:07:00+03:00",
+          "amount": -7600.0,
+          "currency": "RUB",
+          "status": "posted",
+          "merchant_order_id": "TP-55102-B"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0026-A",
+          "type": "order_invoice",
+          "summary": "Один заказ на 26 000 ₽ состоит из монитора 18 400 ₽ и док-станции 7 600 ₽."
+        },
+        {
+          "evidence_id": "EV-0026-B",
+          "type": "delivery_records",
+          "summary": "Товары отправлены и доставлены двумя отдельными посылками."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-030"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Сопоставить обе операции с общим заказом.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Обе операции окончательно отражены как отдельные presentment.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить, относятся ли суммы к разным товарам.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Документы подтверждают две самостоятельные поставки и корректные суммы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Подтвердить доставку каждой позиции.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Документы подтверждают две самостоятельные поставки и корректные суммы.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Закрыть без dispute и объяснить split shipment.",
+        "expertise_type": "dispute_evidence_assessment",
+        "expected_output": "Документы подтверждают две самостоятельные поставки и корректные суммы.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Обе операции окончательно отражены как отдельные presentment.",
+        "evidence": [
+          "result_code=POSTED_TRANSACTION",
+          "source_case=HC-2026-0026"
+        ]
+      },
+      {
+        "expertise_type": "dispute_evidence_assessment",
+        "status": "confirmed",
+        "summary": "Документы подтверждают две самостоятельные поставки и корректные суммы.",
+        "evidence": [
+          "result_code=MERCHANT_EVIDENCE_SUFFICIENT",
+          "source_case=HC-2026-0026"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Обе операции признаны корректными; возврат не выполнен.",
+      "resolved_at": "2026-06-10T10:09:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-031",
+    "client_id": "SYN-CL-1231",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Санкционная проверка",
+    "created_at": "2026-06-26T11:48:00+03:00",
+    "priority": "high",
+    "case_description": "На restricted account поступил возврат 61 300 ₽ за отменённый международный перелёт. Клиент просил немедленно вывести сумму. Sanctions review подтвердил, что ограничение относится к самому владельцу счёта, а не к ошибочному совпадению имени; frontline не мог выполнить исходящий перевод или снять restriction.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-06-26T11:48:00+03:00",
+        "text": "Перевести на другой банк 61 300 ₽, поступившие как возврат от авиакомпании."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-06-26T11:48:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: На restricted account поступил возврат 61 300 ₽ за отменённый международный перелёт. Клиент просил немедленно вывести сумму. Sanctions review подтвердил, что ограничение относится к самому владельцу счёта, а не к ошибочному совпадению имени; frontline не мог выполнить исходящий перевод или снять restriction."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-06-26T11:48:00+03:00",
+        "text": "Диагностический код синтетического кейса: CONFIRMED_SANCTIONS_RESTRICTION_APPLIES_TO_REFUNDED_FUNDS."
+      }
+    ],
+    "client_context": {
+      "segment": "mass_affluent",
+      "region": "Белгородская область",
+      "relationship_years": 7.5,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3031",
+        "product_type": "debit_card",
+        "status": "blocked_compliance",
+        "currency": "RUB",
+        "balance": 61300.0,
+        "available_balance": 0.0,
+        "linked_account_id": "SYN-ACC-4031"
+      },
+      {
+        "product_id": "SYN-ACC-4031",
+        "product_type": "current_account",
+        "status": "active_restricted",
+        "currency": "RUB",
+        "balance": 61300.0,
+        "available_balance": 0.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "CONFIRMED_SANCTIONS_RESTRICTION_APPLIES_TO_REFUNDED_FUNDS",
+      "source_topic": "sanctions_review",
+      "ledger_balance": 61300.0,
+      "available_balance": 0.0,
+      "account_status": "active_restricted",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-860042",
+          "type": "refund",
+          "merchant": "NORTHAIR INTL",
+          "posted_at": "2026-06-25T06:37:00+03:00",
+          "amount": 61300.0,
+          "currency": "RUB",
+          "status": "posted",
+          "funds_availability": "blocked"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0028-A",
+          "type": "sanctions_review_record",
+          "summary": "Идентификационные атрибуты подтверждают действительное совпадение; restriction scope включает исходящие средства."
+        },
+        {
+          "evidence_id": "EV-0028-B",
+          "type": "refund_trace",
+          "summary": "Refund легитимен и окончательно зачислен, но доступность средств ограничена."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [
+        "SANCTIONS_ASSET_FREEZE"
+      ],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-031"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Подтвердить факт и сумму refund без попытки его повторного поиска.",
+        "expertise_type": "aml_sanctions_review",
+        "expected_output": "Перевод и выдача средств запрещены до изменения юридического статуса restriction.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить scope действующего restriction.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Возврат найден и зачислен полностью; проблема не в платёжной цепочке.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Остановить запрещённое mock-действие по переводу.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Возврат найден и зачислен полностью; проблема не в платёжной цепочке.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Передать сотруднику допустимую формулировку ответа без раскрытия закрытой информации.",
+        "expertise_type": "refund_trace_check",
+        "expected_output": "Возврат найден и зачислен полностью; проблема не в платёжной цепочке.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "aml_sanctions_review",
+        "status": "confirmed",
+        "summary": "Перевод и выдача средств запрещены до изменения юридического статуса restriction.",
+        "evidence": [
+          "result_code=PROHIBITED_ACTION",
+          "source_case=HC-2026-0028"
+        ]
+      },
+      {
+        "expertise_type": "refund_trace_check",
+        "status": "confirmed",
+        "summary": "Возврат найден и зачислен полностью; проблема не в платёжной цепочке.",
+        "evidence": [
+          "result_code=REFUND_FOUND",
+          "source_case=HC-2026-0028"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Возврат отражён на счёте, но перевод и выдача не выполнены.",
+      "resolved_at": "2026-07-03T15:22:00+03:00",
+      "client_notified": true
+    }
+  },
+  {
+    "case_id": "HIST-DC-032",
+    "client_id": "SYN-CL-1232",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Холд и предавторизация",
+    "created_at": "2026-07-06T17:18:00+03:00",
+    "priority": "high",
+    "case_description": "Отель RIVERSTONE установил предавторизацию 40 000 ₽ на возможные дополнительные расходы. После выезда итоговый счёт 18 650 ₽ был оплачен отдельной posted-операцией, но reversal на hold не поступил. Письмо отеля подтверждало отсутствие долга, однако не содержало reference reversal; ручное снятие было признано рискованным из-за возможности позднего presentment.",
+    "conversation_transcript": [
+      {
+        "speaker": "client",
+        "timestamp": "2026-07-06T17:18:00+03:00",
+        "text": "Снять hold 40 000 ₽ после выезда из отеля."
+      },
+      {
+        "speaker": "employee",
+        "timestamp": "2026-07-06T17:18:00+03:00",
+        "text": "Зафиксировал обращение. По данным кейса: Отель RIVERSTONE установил предавторизацию 40 000 ₽ на возможные дополнительные расходы. После выезда итоговый счёт 18 650 ₽ был оплачен отдельной posted-операцией, но reversal на hold не поступил. Письмо отеля подтверждало отсутствие долга, однако не содержало reference reversal; ручное снятие было признано рискованным из-за возможности позднего presentment."
+      },
+      {
+        "speaker": "system",
+        "timestamp": "2026-07-06T17:18:00+03:00",
+        "text": "Диагностический код синтетического кейса: MERCHANT_DID_NOT_SEND_REVERSAL_FOR_INCIDENTAL_HOLD."
+      }
+    ],
+    "client_context": {
+      "segment": "premium",
+      "region": "Вологодская область",
+      "relationship_years": 8.2,
+      "communication_language": "ru",
+      "vulnerability_flags": []
+    },
+    "products": [
+      {
+        "product_id": "SYN-CARD-3032",
+        "product_type": "debit_card",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 97240.0,
+        "available_balance": 97240.0,
+        "linked_account_id": "SYN-ACC-4032"
+      },
+      {
+        "product_id": "SYN-ACC-4032",
+        "product_type": "current_account",
+        "status": "active",
+        "currency": "RUB",
+        "balance": 97240.0,
+        "available_balance": 97240.0
+      }
+    ],
+    "synthetic_system_data": {
+      "service_issue_code": "MERCHANT_DID_NOT_SEND_REVERSAL_FOR_INCIDENTAL_HOLD",
+      "source_topic": "pending_authorization",
+      "ledger_balance": 97240.0,
+      "available_balance": 97240.0,
+      "account_status": "active",
+      "transactions": [
+        {
+          "transaction_id": "TX-SYN-890011",
+          "type": "card_authorization",
+          "merchant": "RIVERSTONE HOTEL",
+          "mcc": "7011",
+          "authorization_at": "2026-07-01T14:23:00+03:00",
+          "amount": -40000.0,
+          "currency": "RUB",
+          "status": "expired",
+          "reversal_status": "not_received"
+        },
+        {
+          "transaction_id": "TX-SYN-892640",
+          "type": "card_purchase",
+          "merchant": "RIVERSTONE HOTEL",
+          "mcc": "7011",
+          "posted_at": "2026-07-05T04:54:00+03:00",
+          "amount": -18650.0,
+          "currency": "RUB",
+          "status": "posted"
+        }
+      ],
+      "evidence": [
+        {
+          "evidence_id": "EV-0029-A",
+          "type": "hotel_final_invoice",
+          "summary": "Итоговый счёт 18 650 ₽ оплачен полностью; задолженности нет."
+        },
+        {
+          "evidence_id": "EV-0029-B",
+          "type": "merchant_email",
+          "summary": "Отель обещает, что hold исчезнет автоматически, но reversal reference не предоставляет."
+        }
+      ],
+      "missing_information": [],
+      "blockers": [],
+      "restrictions": [],
+      "synthetic_import_reference": "SYN-SRC-032"
+    },
+    "resolution_plan": [
+      {
+        "step": 1,
+        "action": "Разделить hotel hold и итоговый posted debit.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Подтверждения долга нет, но без reversal ручное снятие не разрешено; требуется expiry.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 2,
+        "action": "Проверить наличие reversal и риск позднего presentment.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Итоговый счёт posted отдельно; исходный hold не предъявлен.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 3,
+        "action": "Не выполнять ручной release без достаточного процессингового основания.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Итоговый счёт posted отдельно; исходный hold не предъявлен.",
+        "requires_confirmation": false
+      },
+      {
+        "step": 4,
+        "action": "Мониторить authorization до expiry и повторно сверить баланс.",
+        "expertise_type": "card_transaction_status_check",
+        "expected_output": "Итоговый счёт posted отдельно; исходный hold не предъявлен.",
+        "requires_confirmation": true
+      }
+    ],
+    "expertise_results": [
+      {
+        "expertise_type": "card_transaction_status_check",
+        "status": "confirmed",
+        "summary": "Итоговый счёт posted отдельно; исходный hold не предъявлен.",
+        "evidence": [
+          "result_code=POSTED_TRANSACTION",
+          "source_case=HC-2026-0029"
+        ]
+      }
+    ],
+    "final_result": {
+      "status": "resolved",
+      "summary": "Hold 40 000 ₽ исчез по штатному expiry; дополнительного списания не возникло.",
+      "resolved_at": "2026-07-10T12:41:00+03:00",
+      "client_notified": true
+    }
+  }
+]

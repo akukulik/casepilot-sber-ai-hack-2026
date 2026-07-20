@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/runtime_scenario_drafts.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "draft_id", "status", "proposal_type", "target_scenario_id",
+      "proposed_scenario", "source_event_ids", "source_case_ids",
+      "evidence_count", "created_at", "generation_method", "validation"
+    ],
+    "properties": {
+      "draft_id": {"type": "string", "pattern": "^SCD-[0-9]{4}$"},
+      "status": {
+        "enum": [
+          "draft", "validation_failed", "ready_for_expert_review",
+          "rejected", "published"
+        ]
+      },
+      "proposal_type": {"enum": ["new_scenario", "scenario_update"]},
+      "target_scenario_id": {"type": ["string", "null"]},
+      "proposed_scenario": {"type": "object"},
+      "source_event_ids": {"type": "array", "minItems": 3, "uniqueItems": true},
+      "source_case_ids": {"type": "array", "minItems": 3, "uniqueItems": true},
+      "evidence_count": {"type": "integer", "minimum": 3},
+      "created_at": {"type": "string", "format": "date-time"},
+      "generation_method": {"const": "deterministic_cluster_synthesis_v1"},
+      "validation": {"type": ["object", "null"]}
+    }
+  }
+}

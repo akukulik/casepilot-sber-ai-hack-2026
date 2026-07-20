@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Scenario Gaps"
+  short_description: "Create governed drafts from validated manual outcomes"
+  default_prompt: "Analyze validated manual outcomes and create scenario drafts only."

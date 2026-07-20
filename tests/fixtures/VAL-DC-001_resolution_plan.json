@@ -1,0 +1,90 @@
+{
+  "case_id": "VAL-DC-001",
+  "case_summary": "Закрытие счёта заблокировано незавершённой карточной операцией.",
+  "identified_problem": {
+    "type": "active_authorization_hold",
+    "description": "После отменённой покупки сохраняется активный холд.",
+    "evidence": [
+      "В synthetic_system_data присутствуют pending operation и authorization hold."
+    ]
+  },
+  "scenarios_used": [
+    {
+      "scenario_id": "SCN-DC-CLOSE-ACTIVE-HOLD",
+      "similarity_score": 0.82,
+      "useful_pattern": "Проверить процессинг, подтвердить холд и повторить closure check.",
+      "source_case_ids": [
+        "HIST-DC-002"
+      ]
+    }
+  ],
+  "proposed_plan": [
+    {
+      "step_id": "step_1",
+      "order": 1,
+      "action_type": "check",
+      "action": "check_account_state",
+      "description": "Проверить состояние счёта и блокирующие признаки.",
+      "expertise_type": null,
+      "required_inputs": ["case_id", "account_id"],
+      "expected_result": "Текущее состояние счёта.",
+      "success_condition": "Состояние получено.",
+      "failure_action": "manual_review",
+      "status": "pending"
+    },
+    {
+      "step_id": "step_2",
+      "order": 2,
+      "action_type": "check",
+      "action": "check_pending_operations",
+      "description": "Проверить незавершённую операцию и холд.",
+      "expertise_type": null,
+      "required_inputs": ["case_id", "card_id", "account_id"],
+      "expected_result": "Статус операции, холда и reversal.",
+      "success_condition": "Статус процессинга получен.",
+      "failure_action": "manual_review",
+      "status": "pending"
+    },
+    {
+      "step_id": "step_3",
+      "order": 3,
+      "action_type": "expertise",
+      "action": "request_expertise",
+      "description": "Подтвердить статус незавершённой карточной операции.",
+      "expertise_type": "card_transaction_status_check",
+      "required_inputs": ["case_id", "account_id", "card_id", "authorization_events", "pending_operations"],
+      "expected_result": "Машинный result_code карточного процессинга.",
+      "success_condition": "Экспертиза вернула разрешённый result_code.",
+      "failure_action": "manual_review",
+      "status": "pending"
+    },
+    {
+      "step_id": "step_4",
+      "order": 4,
+      "action_type": "check",
+      "action": "check_account_closure_eligibility",
+      "description": "Повторно проверить возможность закрытия счёта.",
+      "expertise_type": null,
+      "required_inputs": ["case_id", "account_id", "previous_results"],
+      "expected_result": "Eligibility и оставшиеся блокеры.",
+      "success_condition": "Получено детерминированное решение.",
+      "failure_action": "manual_review",
+      "status": "pending"
+    }
+  ],
+  "required_expertises": [
+    {
+      "expertise_type": "card_transaction_status_check",
+      "reason": "Нужно подтвердить статус холда и reversal.",
+      "planned_step_id": "step_3"
+    }
+  ],
+  "confidence": {
+    "level": "high",
+    "score": 0.82,
+    "reason": "Сильное совпадение с утверждённым сценарием."
+  },
+  "open_questions": [],
+  "requires_employee_approval": true,
+  "recommended_next_action": "approve_plan"
+}

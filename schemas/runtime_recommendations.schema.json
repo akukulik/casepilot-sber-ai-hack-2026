@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "recommendation_id",
+      "run_id",
+      "case_id",
+      "plan_id",
+      "plan_version",
+      "execution_id",
+      "recommendation_version",
+      "status",
+      "recommendation",
+      "metadata",
+      "created_at"
+    ],
+    "properties": {
+      "recommendation_id": {"type": "string", "pattern": "^REC-[0-9]{4,}$"},
+      "run_id": {"type": "string"},
+      "case_id": {"type": "string"},
+      "plan_id": {"type": "string"},
+      "plan_version": {"type": "integer", "minimum": 1, "maximum": 2},
+      "execution_id": {"type": "string"},
+      "recommendation_version": {"const": 1},
+      "status": {"enum": ["generated", "fallback"]},
+      "recommendation": {"$ref": "resolution_recommendation.schema.json"},
+      "metadata": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model",
+          "reasoning_effort",
+          "model_requests",
+          "validation",
+          "fallback_reason"
+        ],
+        "properties": {
+          "model": {"type": ["string", "null"]},
+          "reasoning_effort": {"type": ["string", "null"]},
+          "model_requests": {"type": "integer", "minimum": 0, "maximum": 2},
+          "validation": {"enum": ["passed", "fallback"]},
+          "fallback_reason": {"type": ["string", "null"]}
+        }
+      },
+      "created_at": {"type": "string", "format": "date-time"}
+    }
+  }
+}

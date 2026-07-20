@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/validation_cases.schema.json",
+  "title": "CasePilot validation cases",
+  "type": "array",
+  "minItems": 1,
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "case_id",
+      "client_id",
+      "case_topic",
+      "case_subtopic",
+      "created_at",
+      "priority",
+      "case_description",
+      "conversation_transcript",
+      "client_context",
+      "products",
+      "synthetic_system_data"
+    ],
+    "properties": {
+      "case_id": {"type": "string", "pattern": "^VAL-DC-[0-9]{3}$"},
+      "client_id": {"type": "string", "pattern": "^SYN-CL-[0-9]{4}$"},
+      "case_topic": {"const": "Дебетовые карты"},
+      "case_subtopic": {"type": "string", "minLength": 1},
+      "created_at": {"type": "string", "format": "date-time"},
+      "priority": {"enum": ["low", "normal", "high", "critical"]},
+      "case_description": {"type": "string", "minLength": 40},
+      "conversation_transcript": {
+        "type": "array",
+        "minItems": 2,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["speaker", "timestamp", "text"],
+          "properties": {
+            "speaker": {"enum": ["client", "employee", "system"]},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "text": {"type": "string", "minLength": 1}
+          }
+        }
+      },
+      "client_context": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["segment", "region", "relationship_years", "communication_language", "vulnerability_flags"],
+        "properties": {
+          "segment": {"type": "string", "minLength": 1},
+          "region": {"type": "string", "minLength": 1},
+          "relationship_years": {"type": "number", "minimum": 0},
+          "communication_language": {"type": "string", "minLength": 1},
+          "vulnerability_flags": {
+            "type": "array",
+            "items": {"type": "string", "minLength": 1},
+            "uniqueItems": true
+          }
+        }
+      },
+      "products": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["product_id", "product_type", "status", "currency"],
+          "properties": {
+            "product_id": {"type": "string", "minLength": 1},
+            "product_type": {"type": "string", "minLength": 1},
+            "status": {"type": "string", "minLength": 1},
+            "currency": {"type": "string", "pattern": "^[A-Z]{3}$"},
+            "balance": {"type": "number"},
+            "available_balance": {"type": "number"},
+            "linked_account_id": {"type": "string", "minLength": 1}
+          }
+        }
+      },
+      "synthetic_system_data": {
+        "type": "object",
+        "minProperties": 1,
+        "additionalProperties": true
+      }
+    }
+  }
+}

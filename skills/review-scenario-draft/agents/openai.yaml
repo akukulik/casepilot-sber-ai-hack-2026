@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Scenario Draft"
+  short_description: "Publish only after explicit expert approval"
+  default_prompt: "Review this validated draft and record the expert decision."

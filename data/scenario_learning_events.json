@@ -1,0 +1,59 @@
+[
+  {
+    "event_id": "SLE-DEMO-001",
+    "case_id": "HIST-MANUAL-DC-101",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Смена ПИН-кода после блокировки",
+    "problem_signature": "pin_retry_limit_after_verified_owner_request",
+    "resolution_status": "validated_success",
+    "operator_decision": "manual_resolution",
+    "actions_taken": [
+      "check_account_state",
+      "request_expertise",
+      "prepare_resolution_decision"
+    ],
+    "expertise_types": ["card_fraud_review"],
+    "required_inputs": ["case_id", "card_id", "account_id", "authentication_events"],
+    "resolution_summary": "После проверки владельца и отсутствия fraud-признаков разрешён безопасный перевыпуск ПИН-конверта.",
+    "validated_by": "EMP-EXPERT-001",
+    "validated_at": "2026-07-18T10:00:00Z"
+  },
+  {
+    "event_id": "SLE-DEMO-002",
+    "case_id": "HIST-MANUAL-DC-102",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Смена ПИН-кода после блокировки",
+    "problem_signature": "pin_retry_limit_after_verified_owner_request",
+    "resolution_status": "validated_success",
+    "operator_decision": "manual_resolution",
+    "actions_taken": [
+      "check_account_state",
+      "request_expertise",
+      "prepare_resolution_decision"
+    ],
+    "expertise_types": ["card_fraud_review"],
+    "required_inputs": ["case_id", "card_id", "account_id", "authentication_events"],
+    "resolution_summary": "Ручная проверка исключила компрометацию; сотрудник предложил безопасное восстановление ПИН.",
+    "validated_by": "EMP-EXPERT-001",
+    "validated_at": "2026-07-18T11:00:00Z"
+  },
+  {
+    "event_id": "SLE-DEMO-003",
+    "case_id": "HIST-MANUAL-DC-103",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Смена ПИН-кода после блокировки",
+    "problem_signature": "pin_retry_limit_after_verified_owner_request",
+    "resolution_status": "validated_success",
+    "operator_decision": "manual_resolution",
+    "actions_taken": [
+      "check_account_state",
+      "request_expertise",
+      "prepare_resolution_decision"
+    ],
+    "expertise_types": ["card_fraud_review"],
+    "required_inputs": ["case_id", "card_id", "account_id", "authentication_events"],
+    "resolution_summary": "После идентификации и fraud-проверки кейс закрыт инструкцией по безопасной смене ПИН.",
+    "validated_by": "EMP-EXPERT-002",
+    "validated_at": "2026-07-18T12:00:00Z"
+  }
+]

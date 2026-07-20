@@ -1,0 +1,44 @@
+# Secrets and local provider configuration
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+secrets/
+credentials/
+
+# Ouroboros local runtime/configuration if ever linked into this workspace
+.ouroboros/
+settings.json
+config.local.*
+*.local
+casepilot_project_dir.local.txt
+casepilot_data_dir.local.txt
+
+# macOS and downloaded installers
+.DS_Store
+downloads/
+
+# Python environments, caches, coverage, and tooling
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Runtime state and generated output
+data/runtime/*.json
+data/runtime/*.jsonl
+!data/runtime/.gitkeep
+artifacts/
+imports/
+logs/
+*.log
+
+# IDE files
+.idea/
+.vscode/

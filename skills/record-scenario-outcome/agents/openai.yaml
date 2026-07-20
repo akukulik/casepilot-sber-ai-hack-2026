@@ -1,0 +1,4 @@
+interface:
+  display_name: "Record Scenario Outcome"
+  short_description: "Add expert-validated evidence to scenario learning"
+  default_prompt: "Record this verified successful outcome as scenario-learning evidence."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Validate Scenario Draft"
+  short_description: "Check evidence, allowlists, conflicts, and replay"
+  default_prompt: "Validate this CasePilot scenario draft without publishing it."

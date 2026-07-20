@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "required": ["execution_id", "run_id", "case_id", "plan_id", "plan_version", "execution_status", "started_at", "completed_at", "steps", "resolved_blockers", "remaining_blockers"],
+    "properties": {
+      "execution_id": {"type": "string"},
+      "run_id": {"type": "string", "pattern": "^RUN-VAL-[A-Z0-9]+-[0-9]+-[0-9]{4}$"},
+      "case_id": {"type": "string"},
+      "plan_id": {"type": "string"},
+      "plan_version": {"type": "integer", "minimum": 1, "maximum": 2},
+      "execution_status": {"enum": ["executing", "completed", "failed", "waiting_for_information", "replan_required", "manual_review"]},
+      "started_at": {"type": "string", "format": "date-time"},
+      "completed_at": {"type": ["string", "null"], "format": "date-time"},
+      "steps": {"type": "array"},
+      "resolved_blockers": {"type": "array", "items": {"type": "string"}},
+      "remaining_blockers": {"type": "array", "items": {"type": "string"}},
+      "closure_eligibility": {"type": "object"},
+      "client_response_draft": {"type": "string"},
+      "requires_final_employee_approval": {"type": "boolean"},
+      "recommended_next_action": {"type": "string"}
+      ,
+      "stop_reason": {"type": "string"},
+      "required_human_action": {"type": "string"},
+      "missing_fields": {
+        "type": "array",
+        "items": {"type": "string"},
+        "uniqueItems": true
+      }
+    },
+    "additionalProperties": false
+  }
+}

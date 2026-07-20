@@ -1,0 +1,188 @@
+[
+  {
+    "scenario_id": "SCN-DC-CLOSE-NEGATIVE-BALANCE",
+    "version": 1,
+    "status": "approved",
+    "title": "Закрытие счёта с техническим отрицательным остатком",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "description": "Сценарий применяется, когда закрытие счёта блокирует отрицательный или ненулевой остаток, связанный с комиссией либо техническим начислением.",
+    "trigger_conditions": [
+      "closure_check_code=ACCOUNT_BALANCE_NOT_ZERO",
+      "ledger_balance<0",
+      "fee_events присутствуют"
+    ],
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "ledger_balance",
+      "available_balance",
+      "fee_events"
+    ],
+    "product_types": [
+      "debit_card",
+      "current_account"
+    ],
+    "strategy_steps": [
+      {
+        "order": 1,
+        "action": "check_account_state",
+        "description": "Проверить актуальное состояние счёта и величину остатка.",
+        "expertise_type": null
+      },
+      {
+        "order": 2,
+        "action": "request_expertise",
+        "description": "Определить происхождение отрицательного остатка и допустимость технической корректировки.",
+        "expertise_type": "account_balance_analysis"
+      },
+      {
+        "order": 3,
+        "action": "check_account_closure_eligibility",
+        "description": "После результата экспертизы повторно проверить возможность закрытия.",
+        "expertise_type": null
+      }
+    ],
+    "allowed_expertises": [
+      "account_balance_analysis"
+    ],
+    "stop_conditions": [
+      "customer_debt_confirmed",
+      "manual_reconciliation_required",
+      "missing fee event data"
+    ],
+    "source_case_ids": [
+      "HIST-DC-001"
+    ],
+    "successful_cases": 1,
+    "success_rate": 1.0,
+    "approved_by": "EMP-DEMO-001",
+    "approved_at": "2026-07-19T12:00:00+03:00"
+  },
+  {
+    "scenario_id": "SCN-DC-CLOSE-ACTIVE-HOLD",
+    "version": 1,
+    "status": "approved",
+    "title": "Закрытие счёта с активным карточным холдом",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "description": "Сценарий применяется, когда незавершённая авторизация, reversal или возврат продолжает блокировать закрытие счёта.",
+    "trigger_conditions": [
+      "closure_check_code=ACTIVE_AUTHORIZATION_HOLD",
+      "authorization_events содержат active или reversal_pending",
+      "pending_operations присутствуют"
+    ],
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "card_id",
+      "authorization_events",
+      "pending_operations"
+    ],
+    "product_types": [
+      "debit_card",
+      "current_account"
+    ],
+    "strategy_steps": [
+      {
+        "order": 1,
+        "action": "check_pending_operations",
+        "description": "Проверить активные авторизации и незавершённые операции.",
+        "expertise_type": null
+      },
+      {
+        "order": 2,
+        "action": "request_expertise",
+        "description": "Подтвердить статус холда, reversal и ожидаемый срок освобождения.",
+        "expertise_type": "card_transaction_status_check"
+      },
+      {
+        "order": 3,
+        "action": "check_account_state",
+        "description": "Проверить состояние счёта после обработки карточной операции.",
+        "expertise_type": null
+      },
+      {
+        "order": 4,
+        "action": "check_account_closure_eligibility",
+        "description": "Повторно проверить возможность закрытия счёта.",
+        "expertise_type": null
+      }
+    ],
+    "allowed_expertises": [
+      "card_transaction_status_check"
+    ],
+    "stop_conditions": [
+      "processing_incident_suspected",
+      "active_hold_confirmed",
+      "missing authorization data"
+    ],
+    "source_case_ids": [
+      "HIST-DC-002"
+    ],
+    "successful_cases": 1,
+    "success_rate": 1.0,
+    "approved_by": "EMP-DEMO-001",
+    "approved_at": "2026-07-19T12:00:00+03:00"
+  },
+  {
+    "scenario_id": "SCN-DC-CLOSE-ACCOUNT-RESTRICTION",
+    "version": 1,
+    "status": "approved",
+    "title": "Закрытие счёта с ограничением или арестом",
+    "case_topic": "Дебетовые карты",
+    "case_subtopic": "Закрытие счёта",
+    "description": "Сценарий применяется, когда закрытие блокирует активное ограничение, арест либо неоднозначное основание запрета по счёту.",
+    "trigger_conditions": [
+      "closure_check_code=ACTIVE_ACCOUNT_RESTRICTION",
+      "restriction_flags присутствуют",
+      "требуется restriction_reference"
+    ],
+    "required_inputs": [
+      "case_id",
+      "account_id",
+      "restriction_flags",
+      "restriction_reference"
+    ],
+    "product_types": [
+      "debit_card",
+      "current_account"
+    ],
+    "strategy_steps": [
+      {
+        "order": 1,
+        "action": "check_account_state",
+        "description": "Подтвердить состояние счёта и наличие ограничения.",
+        "expertise_type": null
+      },
+      {
+        "order": 2,
+        "action": "request_expertise",
+        "description": "Проверить тип, основание и статус ограничения.",
+        "expertise_type": "account_restriction_check"
+      },
+      {
+        "order": 3,
+        "action": "check_account_closure_eligibility",
+        "description": "После проверки ограничения определить возможность закрытия.",
+        "expertise_type": null
+      }
+    ],
+    "allowed_expertises": [
+      "account_restriction_check"
+    ],
+    "stop_conditions": [
+      "active_restriction_confirmed",
+      "restriction_release_pending",
+      "manual_legal_review_required",
+      "missing restriction_reference"
+    ],
+    "source_case_ids": [
+      "HIST-DC-003"
+    ],
+    "successful_cases": 1,
+    "success_rate": 1.0,
+    "approved_by": "EMP-DEMO-001",
+    "approved_at": "2026-07-19T12:00:00+03:00"
+  }
+]

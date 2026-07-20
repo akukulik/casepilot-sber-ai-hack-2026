@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://casepilot.local/schemas/runtime_scenario_reviews.schema.json",
+  "type": "array",
+  "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+      "review_id", "draft_id", "decision", "expert_id",
+      "comment", "created_at", "outcome"
+    ],
+    "properties": {
+      "review_id": {"type": "string", "pattern": "^SCR-[0-9]{4}$"},
+      "draft_id": {"type": "string", "pattern": "^SCD-[0-9]{4}$"},
+      "decision": {"enum": ["approve", "reject"]},
+      "expert_id": {"const": "EMP-DEMO-001"},
+      "comment": {"type": ["string", "null"]},
+      "created_at": {"type": "string", "format": "date-time"},
+      "outcome": {"enum": ["published", "rejected"]}
+    }
+  }
+}
